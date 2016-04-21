@@ -1,0 +1,20 @@
+{
+	"name": "gasm",
+	"license": "MIT",
+	"tags": [
+		"ecs",
+		"framework",
+		"engine"
+	],
+	"classPath": "src",
+	"description": "Renderer agnostic ECS framework",
+	"contributors": [
+		"leo.bergman"
+	],
+	"releasenote": "See https://github.com/lbergman/gasm/blob/master/doc/changes.md",
+	"version": "0.0.1.0",
+	"url": "https://github.com/lbergman/gasm",
+	 "dependencies": {
+	    "msignal": ""
+	  }
+}
