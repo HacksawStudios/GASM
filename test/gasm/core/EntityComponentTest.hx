@@ -242,50 +242,6 @@ class EntityComponentTest
 		base.add(comp2);
 		Assert.areEqual(comp1, comp2.owner.get(TestComponentExtendsMockA));
 	}
-	
-	// Graph tests
-	
-/*	@Test
-	public function complexGraphAdded_traversing_speedIsAcceptable():Void
-	{
-		var start = Timer.stamp();
-		var base = new Entity();
-		for (i in 0...30)
-		{
-			var ent = new Entity();
-			base.addChild(ent);
-			for (j in 0...30)
-			{
-				var entChild = new Entity();
-				ent.addChild(entChild);
-				entChild.add(new TestComponentExtendsComponentA())
-						.add(new TestComponentExtendsComponentB())
-						.add(new TestComponentExtendsMockA())
-						.add(new TestComponentExtendsMockB());
-			}
-		}
-		var updateEntity:Entity -> Float -> Void = null;
-		updateEntity = function(entity, delta)
-		{
-			var comp = base.firstComponent;
-			while (comp != null) 
-			{
-				var next = comp.next;
-				comp.update(0.1);
-				comp = next;
-			}
-			var ent = entity.firstChild;
-			while (ent != null) 
-			{
-				var next = ent.next;
-				updateEntity(ent, delta);
-				ent = next;
-			}
-		};
-		updateEntity(base, 0.1);
-		var elapsed = Timer.stamp() - start;
-		Assert.isTrue(elapsed < 1);
-	}*/
 }
 
 class TestComponent extends Component 

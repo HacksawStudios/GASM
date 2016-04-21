@@ -1,5 +1,4 @@
 package gasm.core.enums;
-import gasm.core.utils.BitIndex;
 
 /**
  * Bit flags for different component types.
@@ -7,7 +6,7 @@ import gasm.core.utils.BitIndex;
  * @author Leo Bergman
  */
 @:enum
-abstract ComponentType(Int) from UInt to BitIndex
+abstract ComponentType(UInt)
 {
 	var Model = 1 << 0;
 	var ActiveModel = 1 << 1;

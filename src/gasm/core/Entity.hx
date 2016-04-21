@@ -8,7 +8,6 @@ import gasm.core.components.TextModelComponent;
 import gasm.core.enums.ComponentType;
 
 using Lambda;
-using gasm.core.utils.BitUtils;
 using haxe.macro.Tools;
 /**
  * A node in the entity hierarchy, and a collection of components.
@@ -185,24 +184,6 @@ public function getFromParents<T:Component> (componentClass:Class<T>):T
     }
 #end
 	
-	/*public function get<T>(clazz:Class<T>):T
-	{
-		var name = Type.getClassName(clazz);
-		if (_compMap.exists(name))
-		{
-			return cast _compMap.get(name);
-		}
-		else
-		{
-			var nextClazz:Class<Dynamic> = Type.getSuperClass(clazz);
-			if (nextClazz == Component)
-			{
-				return null;
-			}
-			return get(nextClazz);
-		}
-	}
-*/
     /**
      * Adds a child to this entity.
      * @param append Whether to add the entity to the end or beginning of the child list.

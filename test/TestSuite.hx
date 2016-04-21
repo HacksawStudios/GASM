@@ -1,8 +1,6 @@
 import massive.munit.TestSuite;
 
 import gasm.core.EntityComponentTest;
-import gasm.core.utils.BitIndexTest;
-import gasm.core.utils.BitUtilsTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -17,7 +15,5 @@ class TestSuite extends massive.munit.TestSuite
 		super();
 
 		add(gasm.core.EntityComponentTest);
-		add(gasm.core.utils.BitIndexTest);
-		add(gasm.core.utils.BitUtilsTest);
 	}
 }
