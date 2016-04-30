@@ -8,7 +8,7 @@ import gasm.core.enums.ComponentType;
  * 
  * @author Leo Bergman
  */
-class TextModelComponent extends Component
+class TextModelComponent extends SpriteModelComponent
 {
 	public var text(default, default):String = "";
 	public var font(default, default):Null<String>;
@@ -18,6 +18,7 @@ class TextModelComponent extends Component
 	
 	public function new(text:String, ?size:Int=14, ?col:UInt=0xFFFFFF) 
 	{
+		super();
 		this.text = text;
 		this.size = size;
 		this.color = col;

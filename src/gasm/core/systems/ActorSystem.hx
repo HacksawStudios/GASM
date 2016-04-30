@@ -1,12 +1,8 @@
 package gasm.core.systems;
 import gasm.core.enums.SystemType;
 import gasm.core.System;
-import gasm.core.utils.BitIndex;
-import gasm.core.utils.Bits;
 
 import gasm.core.enums.ComponentType;
-
-using gasm.core.utils.BitUtils;
 
 /**
  * Updates the actor components.
@@ -17,8 +13,8 @@ class ActorSystem extends System implements ISystem
 {
 	public function new() 
 	{
-		type = type.add(SystemType.ACTOR);
-		componentFlags = componentFlags.add(ComponentType.Actor);
+		type = SystemType.ACTOR;
+		componentFlags.set(ComponentType.Actor);
 	}
 	
 	inline public function update(comp:Component, delta:Float) 

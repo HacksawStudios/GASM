@@ -8,7 +8,6 @@ import gasm.core.components.TextModelComponent;
 import gasm.core.enums.ComponentType;
 
 using Lambda;
-using gasm.core.utils.BitUtils;
 using haxe.macro.Tools;
 /**
  * A node in the entity hierarchy, and a collection of components.
@@ -84,14 +83,10 @@ using haxe.macro.Tools;
         }
         component.owner = this;
         component.next = null;
-		if (component.componentType == Graphics)
+		if (component.componentType == Graphics || component.componentType == Text)
 		{
 			add(new SpriteModelComponent());
 		}		
-		else if (component.componentType == Text)
-		{
-			add(new SpriteModelComponent());
-		}
 		else if (component.componentType == Sound)
 		{
 			add(new SoundModelComponent());

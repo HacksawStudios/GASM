@@ -1,12 +1,9 @@
 package gasm.core.systems;
 import gasm.core.enums.SystemType;
 import gasm.core.ISystem;
-import gasm.core.utils.Bits;
 
 // Autoremoved by FD if optizing imports
 import gasm.core.enums.ComponentType;
-using gasm.core.utils.BitUtils;
-
 /**
  * Updates core model compoenents.
  * 
@@ -16,8 +13,11 @@ class CoreSystem extends System implements ISystem
 {
 	public function new() 
 	{
-		type = type.add(SystemType.CORE);
-		componentFlags = componentFlags.add(GraphicsModel).add(TextModel).add(ActiveModel).add(SoundModel);
+		type = SystemType.CORE;
+		componentFlags.set(GraphicsModel);
+		componentFlags.set(TextModel);
+		componentFlags.set(ActiveModel);
+		componentFlags.set(SoundModel);
 	}
 	
 	inline public function update(comp:Component, delta:Float) 

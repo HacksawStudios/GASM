@@ -1,5 +1,6 @@
 package gasm.core;
 import gasm.core.enums.ComponentType;
+import haxe.EnumFlags;
 
 /**
  * ...

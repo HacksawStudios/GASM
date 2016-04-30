@@ -1,6 +1,7 @@
 package gasm.core;
 import gasm.core.systems.ActorSystem;
 import gasm.core.systems.CoreSystem;
+import haxe.EnumFlags;
 import haxe.Timer;
 import gasm.core.enums.ComponentType;
 import gasm.core.enums.SystemType;
@@ -10,7 +11,6 @@ import gasm.core.enums.SystemType;
  * ...
  * @author Leo Bergman
  */
-using gasm.core.utils.BitUtils;
 
 class Engine
 {
@@ -22,13 +22,15 @@ class Engine
 	{
 		_systems = systems.concat([new CoreSystem(), new ActorSystem()]);
 		_systems.sort(function(x, y) {
-			var xval:UInt = x.type;
-			var yval:UInt = y.type;
-			if (xval > yval)
+			var xval = new EnumFlags<SystemType>();
+			xval.set(x.type);
+			var yval = new EnumFlags<SystemType>();
+			yval.set(y.type);
+			if (xval.toInt() > yval.toInt())
 			{
 				return 1;
 			}
-			if (xval < yval)
+			if (xval.toInt() < yval.toInt())
 			{
 				return -1;
 			}
@@ -59,7 +61,7 @@ class Engine
             var next = comp.next;
 			for (system in _systems)
 			{		
-				if(system.componentFlags.contains(comp.componentType))
+				if(system.componentFlags.has(comp.componentType))
 				{
 					system.update(comp, delta);
 				}

@@ -1,6 +1,7 @@
 package gasm.core;
+import gasm.core.enums.ComponentType;
 import gasm.core.enums.SystemType;
-import gasm.core.utils.Bits;
+import haxe.EnumFlags;
 
 /**
  * ...
@@ -8,6 +9,6 @@ import gasm.core.utils.Bits;
  */
 class System 
 {
-	public var type(default, null):Bits = 0;
-	public var componentFlags(default, null):Bits = 0;
+	public var type(default, null):SystemType;
+	public var componentFlags(default, null):EnumFlags<ComponentType>;
 }
