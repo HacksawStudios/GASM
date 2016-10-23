@@ -8,17 +8,8 @@ haxe:
   - development
   
 install:
-  #- haxelib install munit # install munit
-  #- haxelib dev src $TRAVIS_BUILD_DIR
   - haxelib install travix
   - haxelib run travix install  
-
-#before_script:
- # - "export DISPLAY=:99.0"
-  #- "sh -e /etc/init.d/xvfb start"
-  #- sleep 3 # give xvfb some time to start
-#  - mkdir ffox_profile # Create a directory to store a firefox profile
-#  - echo "user_pref(\"dom.allow_scripts_to_close_windows\", true);" >> ffox_profile/prefs.js # Create a dummy firefox profile that allows munit to kill the browser after the tests
 
 script:
   
@@ -26,10 +17,8 @@ script:
   - haxelib run travix neko
   - haxelib run travix python
   - haxelib run travix node
-  # - haxelib run travix flash
+  - haxelib run travix flash
   - haxelib run travix java
   - haxelib run travix cpp
   - haxelib run travix cs
   - haxelib run travix php
- # - haxe test.hxml
- # - haxelib run munit test -browser "firefox"
