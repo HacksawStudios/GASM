@@ -3,21 +3,20 @@ haxe:
   - "3.2.1"
   - development
   
-before_install:
-    - export DISPLAY=:99.0 #Set our preferred display and screen for X11 server
-    - sh -e /etc/init.d/xvfb start #Start a dummy X11 server that doesn't render anything
-  
 install:
   - haxelib install munit # install munit
   - haxelib dev src $TRAVIS_BUILD_DIR
 
 before_script:
-  - mkdir ffox_profile # Create a directory to store a firefox profile
-  - echo "user_pref(\"dom.allow_scripts_to_close_windows\", true);" >> ffox_profile/prefs.js # Create a dummy firefox profile that allows munit to kill the browser after the tests
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+#  - mkdir ffox_profile # Create a directory to store a firefox profile
+#  - echo "user_pref(\"dom.allow_scripts_to_close_windows\", true);" >> ffox_profile/prefs.js # Create a dummy firefox profile that allows munit to kill the browser after the tests
 
 script:
   - haxe test.hxml
-  - haxelib run munit test -browser "firefox -profile "ffox_profile"" -kill-browser
+  - haxelib run munit test -browser "firefox"
 
 cache:
   directories:
