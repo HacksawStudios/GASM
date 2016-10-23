@@ -1,10 +1,6 @@
 ## Flash 9+
 -main TestMain
 -lib munit
--lib actuate
--lib tink_core
--lib openfl
--lib lime
 -cp src
 
 -cp test
@@ -16,10 +12,6 @@
 ## JavaScript
 -main TestMain
 -lib munit
--lib actuate
--lib tink_core
--lib openfl
--lib lime
 -cp src
 
 -cp test
@@ -32,9 +24,4 @@
 # -cp test
 # -cp src
 # -lib munit
-# -lib actuate
-# -lib polygonal-ds
-# -lib tink_core
-# -lib openfl
-# -lib lime
 # -cpp bin/test/core/cpp_test
