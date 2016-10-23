@@ -26,7 +26,6 @@ class PressSoundComponent extends Component
 		var soundModel = owner.get(SoundModelComponent);
 		spriteModel.pressHandler = function(e:PressEvent)
 		{
-			trace("Sprite pressed: playing:"+soundModel.playing);
 			soundModel.pos = 0;
 			soundModel.playing = true;
 		}

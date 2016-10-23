@@ -36,10 +36,6 @@ class Engine
 			}
 			return 0;
 		});
-/*		_systems.map(function(system) {
-			trace("system:" + system.type.toBinaryString());
-			trace("flags:" + system.componentFlags.toBinaryString());
-		});*/
 		
 		_lastTime = Timer.stamp();
 		baseEntity = new Entity();
