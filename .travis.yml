@@ -6,7 +6,7 @@ haxe:
 before_install:
     - export DISPLAY=:99.0 #Set our preferred display and screen for X11 server
     - sh -e /etc/init.d/xvfb start #Start a dummy X11 server that doesn't render anything
-    - sudo add-apt-repository ppa:eyecreate/haxe
+    - sudo add-apt-repository ppa:eyecreate/haxe -y
     - sudo apt-get update
   
 install:
