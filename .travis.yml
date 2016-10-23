@@ -2,14 +2,29 @@ language: haxe
 haxe:
   - "3.2.1"
   - development
+  
+before_install:
+    - export DISPLAY=:99.0 #Set our preferred display and screen for X11 server
+    - sh -e /etc/init.d/xvfb start #Start a dummy X11 server that doesn't render anything
+    - sudo add-apt-repository ppa:eyecreate/haxe
+    - sudo apt-get update
+  
 install:
+  - sudo apt-get install g++-multilib -y --force-yes
+  - sudo apt-get install haxe -y --force-yes
+  - mkdir ~/haxelib
+  - haxelib setup ~/haxelib
+  - haxelib install munit # install munit
   - haxelib dev src $TRAVIS_BUILD_DIR
-  - haxelib install munit
-  - haxelib list
+
+before_script:
+  - mkdir ffox_profile # Create a directory to store a firefox profile
+  - echo "user_pref(\"dom.allow_scripts_to_close_windows\", true);" >> ffox_profile/prefs.js # Create a dummy firefox profile that allows munit to kill the browser after the tests
 
 script:
   - haxe test.hxml
+  - haxelib run munit test -browser "firefox -profile "ffox_profile"" -kill-browser
 
 cache:
   directories:
-    - $HOME/haxe/lib
+    - $HOME/haxelib

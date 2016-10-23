@@ -2,7 +2,6 @@
 -main TestMain
 -lib munit
 -cp src
-
 -cp test
 -swf-version 11
 -swf build/as3_test.swf
@@ -13,11 +12,10 @@
 -main TestMain
 -lib munit
 -cp src
-
 -cp test
 -js build/js_test.js
 
---next
+# --next
 
 ## CPP
 # -main TestMain

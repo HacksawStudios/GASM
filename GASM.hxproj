@@ -16,25 +16,16 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="C:\HaxeToolkit\haxe\lib\openfl\3,4,0" />
-    <class path="C:\HaxeToolkit\haxe\lib\lime\2,7,0" />
-    <class path="C:\HaxeToolkit\haxe\lib\actuate\1,8,6" />
-    <class path="C:\HaxeToolkit\haxe\lib\munit\2,1,2" />
-    <class path="C:\HaxeToolkit\haxe\lib\mcover\2,1,1" />
-    <class path="C:\HaxeToolkit\haxe\lib\mconsole\1,6,0" />
-    <class path="C:\HaxeToolkit\haxe\lib\mlib\2,0,2" />
-    <class path="C:\HaxeToolkit\haxe\lib\tink_core\1,0,0-rc,11\src" />
-    <class path="src" />
-    <class path="bin\flash\haxe" />
+    <class path="." />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="openfl=3.4.0&#xA;lime=2.7.0&#xA;actuate=1.8.6&#xA;munit=2.1.2&#xA;mcover=2.1.1&#xA;mconsole=1.6.0&#xA;mlib=2.0.2&#xA;tink_core=1.0.0-rc.11&#xA;openfl-next&#xA;tools=2.7.0&#xA;no-compilation&#xA;openfl-flash&#xA;web&#xA;advanced-telemetry&#xA;display" />
+    <option directives="" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="True" />
-    <option additional="-swf-version 11.2" />
+    <option additional="" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
