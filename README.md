@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lbergman/GASM.svg?branch=develop)](https://travis-ci.org/lbergman/GASM)
+
 # GASM ECS
 
 Framework agnostic ECS layer.
