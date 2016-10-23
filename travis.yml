@@ -2,3 +2,18 @@ language: haxe
 haxe:
   - "3.2.1"
   - development
+hxml:
+- build.hxml
+
+install:
+  - yes | haxelib install hxcpp > log.txt || cat log.txt
+  - if [[ $TEST ]]; then
+        yes | haxelib install munit > log.txt || cat log.txt;
+        yes | haxelib install mcover > log.txt || cat log.txt;
+        yes | haxelib install hamcrest > log.txt || cat log.txt;
+    fi
+  - if [[ $LIME ]]; then yes | haxelib install lime $LIME > log.txt || cat log.txt; fi
+  - if [[ $OPENFL ]]; then yes | haxelib install openfl $OPENFL > log.txt || cat log.txt; fi
+  - if [[ $NME ]]; then yes | haxelib install nme $NME > log.txt || cat log.txt; fi
+  - yes | haxelib install dox > log.txt || cat log.txt
+  - haxelib list
