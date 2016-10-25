@@ -22,9 +22,6 @@ install:
 before_script:
   - phpenv config-rm xdebug.ini || true
 
- before_script:
-  - phpenv config-rm xdebug.ini || true 
-  
 script:
   
   - haxelib run travix interp
