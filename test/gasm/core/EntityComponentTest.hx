@@ -121,6 +121,43 @@ class EntityComponentTest extends BuddySuite
 				base.add(comp2);
 				comp1.should.be(comp2.owner.get(TestComponentExtendsMockA));
 			});
+			
+			it("should get component from immediate parent", {
+				var base = new Entity();
+				var comp1 = new TestComponentA();
+				var comp2 = new TestComponentB();
+				var child = new Entity();
+				base.add(comp1);
+				base.addChild(child);
+				child.add(comp2);
+				comp2.owner.getFromParents(TestComponentA).should.be(comp1);
+			});		
+			
+			it("should not get component from sibling parent", {
+				var base = new Entity();
+				var child = new Entity();
+				var sibling = new Entity();
+				var comp1 = new TestComponentA();
+				var comp2 = new TestComponentB();
+				base.addChild(child);
+				base.addChild(sibling);
+				sibling.add(comp1);
+				child.add(comp2);
+				comp2.owner.getFromParents(TestComponentA).should.be(null);
+			});
+			
+			it("should get component from grandparent", {
+				var base = new Entity();
+				var child = new Entity();
+				var grandchild = new Entity();
+				var comp1 = new TestComponentA();
+				var comp2 = new TestComponentB();
+				base.addChild(child);
+				child.addChild(grandchild);
+				base.add(comp1);
+				grandchild.add(comp2);
+				comp2.owner.getFromParents(TestComponentA).should.be(comp1);
+			});		
 		});
 	}
 }

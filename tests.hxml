@@ -3,3 +3,4 @@
 -cp test
 -lib buddy
 -D travis
+-D buddy-colors

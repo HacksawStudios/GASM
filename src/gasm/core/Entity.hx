@@ -165,7 +165,7 @@ public function getFromParents<T:Component> (componentClass:Class<T>):T
         var name = macro $componentClass.BASE_NAME;
         return macro $self.getFromParentsByName($name, $componentClass);
     }
-	inline public function getFromParentsByName<T:Component> (name:String, castToClass:Class<T>):T
+	public function getFromParentsByName<T:Component> (name:String, castToClass:Class<T>):T
     {
         var entity = this;
 		while (entity != null) {
