@@ -1,5 +1,5 @@
--main TestAll
+-main TestMain
 -cp src
 -cp test
--lib utest
+-lib buddy
 -D travis

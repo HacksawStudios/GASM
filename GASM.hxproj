@@ -29,7 +29,7 @@
   </build>
   <!-- haxelib libraries -->
   <haxelib>
-    <library name="utest" />
+    <library name="buddy" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
