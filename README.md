@@ -50,3 +50,16 @@ Or install them with haxelib to try them out:
 ```
 haxelib git gasm-examples https://github.com/lbergman/GASM-examples/master
 ```
+
+## Compatibility
+
+The goal is that the core ECS system should be possible to use for an integration on any target.
+So far only core entity component functionality is tested on Haxe 3.2.1 and 3.3.0 with the following targets:
+  neko
+  python
+  node
+  flash
+  java
+  cpp
+  cs
+  php

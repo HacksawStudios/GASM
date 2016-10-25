@@ -20,8 +20,8 @@ class Engine
 
 	public function new(systems:Array<ISystem>) 
 	{
-		_systems = systems.concat([new CoreSystem(), new ActorSystem()]);
-		_systems.sort(function(x, y) {
+		systems = systems.concat([new CoreSystem(), new ActorSystem()]);
+		systems.sort(function(x, y) {
 			var xval = new EnumFlags<SystemType>();
 			xval.set(x.type);
 			var yval = new EnumFlags<SystemType>();
@@ -36,7 +36,7 @@ class Engine
 			}
 			return 0;
 		});
-		
+		_systems = systems;
 		_lastTime = Timer.stamp();
 		baseEntity = new Entity();
 	}
