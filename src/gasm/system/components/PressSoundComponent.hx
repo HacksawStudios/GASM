@@ -2,9 +2,6 @@ package gasm.system.components;
 import gasm.core.components.SoundModelComponent;
 import gasm.core.components.SpriteModelComponent;
 import gasm.core.events.PressEvent;
-import openfl.display.DisplayObject;
-import openfl.events.MouseEvent;
-import openfl.media.Sound;
 import gasm.core.Component;
 import gasm.core.enums.ComponentType;
 

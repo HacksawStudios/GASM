@@ -1,8 +1,8 @@
 package gasm.extra.components;
-import openfl.geom.Point;
 import gasm.core.Component;
 import gasm.core.components.SpriteModelComponent;
 import gasm.core.enums.ComponentType;
+import gasm.core.math.Point;
 
 /**
  * ...
