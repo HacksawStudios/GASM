@@ -165,12 +165,11 @@ public function getFromParents<T:Component> (componentClass:Class<T>):T
         var name = macro $componentClass.BASE_NAME;
         return macro $self.getFromParentsByName($name, $componentClass);
     }
-	public function getFromParentsByName<T:Component> (name:String, castToClass:Class<T>):T
+	inline public function getFromParentsByName<T:Component> (name:String, castToClass:Class<T>):T
     {
         var entity = this;
 		while (entity != null) {
             var component = entity.getComponentByName(name);
-            component = Std.instance(component, castToClass);
 			if (component != null) {
 				return cast component;
 			}
@@ -179,25 +178,6 @@ public function getFromParents<T:Component> (componentClass:Class<T>):T
         return null;
     }
 #end
-	
-	/*public function get<T>(clazz:Class<T>):T
-	{
-		var name = Type.getClassName(clazz);
-		if (_compMap.exists(name))
-		{
-			return cast _compMap.get(name);
-		}
-		else
-		{
-			var nextClazz:Class<Dynamic> = Type.getSuperClass(clazz);
-			if (nextClazz == Component)
-			{
-				return null;
-			}
-			return get(nextClazz);
-		}
-	}
-*/
     /**
      * Adds a child to this entity.
      * @param append Whether to add the entity to the end or beginning of the child list.

@@ -1,0 +1,5 @@
+-main TestAll
+-cp src
+-cp test
+-lib utest
+-D travis
