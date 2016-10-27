@@ -2,8 +2,5 @@
 -cp src
 -cp test
 -lib buddy
--lib mcover
---macro mcover.MCover.coverage([''], ['src'])
---macro mcover.MCover.logger([''], ['src'])
 -D travis
 -D buddy-colors
