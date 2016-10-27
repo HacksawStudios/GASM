@@ -4,6 +4,7 @@ import gasm.core.System;
 import gasm.core.ISystem;
 import gasm.core.enums.SystemType;
 import gasm.core.enums.ComponentType;
+import haxe.EnumFlags;
 
 /**
  * Updates the actor components.
@@ -14,6 +15,7 @@ class ActorSystem extends System implements ISystem
 {
 	public function new() 
 	{
+		super();
 		type = SystemType.ACTOR;
 		componentFlags.set(ComponentType.Actor);
 	}

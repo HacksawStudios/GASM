@@ -3,9 +3,10 @@ package gasm.core.systems;
 import gasm.core.ISystem;
 import gasm.core.System;
 import gasm.core.enums.SystemType;
+import haxe.EnumFlags;
 // Autoremoved by FD if optimizing imports
 import gasm.core.enums.ComponentType;
-
+import haxe.EnumFlags;
 /**
  * Updates core model compoenents.
  * 
@@ -15,6 +16,7 @@ class CoreSystem extends System implements ISystem
 {
 	public function new() 
 	{
+		super();
 		type = SystemType.CORE;
 		componentFlags.set(GraphicsModel);
 		componentFlags.set(TextModel);
