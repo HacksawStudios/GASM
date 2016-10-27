@@ -1,9 +1,11 @@
 package gasm.core.systems;
-import gasm.core.enums.SystemType;
-import gasm.core.ISystem;
 
-// Autoremoved by FD if optizing imports
+import gasm.core.ISystem;
+import gasm.core.System;
+import gasm.core.enums.SystemType;
+// Autoremoved by FD if optimizing imports
 import gasm.core.enums.ComponentType;
+
 /**
  * Updates core model compoenents.
  * 

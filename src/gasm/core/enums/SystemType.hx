@@ -1,7 +1,7 @@
 package gasm.core.enums;
 
 /**
- * Bit flags for different system types.
+ * Flags for different system types.
  * 
  * @author Leo Bergman
  */

@@ -101,6 +101,31 @@ class EntityTest extends BuddySuite
 					grandchild.parent.should.be(null);
 				});
 			});
+			
+			describe("dispose", {
+				it("should remove itself from parent", {
+					var base = new Entity();
+					var child = new Entity();
+					base.addChild(child);
+					child.dispose();
+					
+					child.parent.should.be(null);
+					base.firstChild.should.be(null);
+				});
+				
+				it("should remove own children", {
+					var base = new Entity();
+					var child = new Entity();
+					var grandchild = new Entity();
+					base.addChild(child);
+					child.addChild(grandchild);
+					
+					child.dispose();
+					
+					child.firstChild.should.be(null);
+					grandchild.parent.should.be(null);
+				});
+			});
 		});
 	}
 }

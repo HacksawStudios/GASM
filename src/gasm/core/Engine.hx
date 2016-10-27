@@ -1,10 +1,12 @@
 package gasm.core;
-import gasm.core.systems.ActorSystem;
-import gasm.core.systems.CoreSystem;
+
 import haxe.EnumFlags;
 import haxe.Timer;
+import gasm.core.systems.ActorSystem;
+import gasm.core.systems.CoreSystem;
 import gasm.core.enums.ComponentType;
 import gasm.core.enums.SystemType;
+import gasm.core.ISystem;
 
 
 /**
@@ -20,7 +22,8 @@ class Engine
 
 	public function new(systems:Array<ISystem>) 
 	{
-		systems = systems.concat([new CoreSystem(), new ActorSystem()]);
+		systems.push(new CoreSystem());
+		systems.push(new ActorSystem());
 		systems.sort(function(x, y) {
 			var xval = new EnumFlags<SystemType>();
 			xval.set(x.type);
@@ -51,18 +54,19 @@ class Engine
 	
 	function updateEntity(entity:Entity, delta:Float) 
 	{
-        var comp = entity.firstComponent;
-        while (comp != null) 
-		{
-            var next = comp.next;
-			for (system in _systems)
-			{		
+		for (i in 0..._systems.length)
+		{		
+			var comp = entity.firstComponent;
+			var system = _systems[i];
+			while (comp != null) 
+			{
+				var next = comp.next;
 				if(system.componentFlags.has(comp.componentType))
 				{
 					system.update(comp, delta);
 				}
+				comp = next;
 			}
-            comp = next;
         }
         var ent = entity.firstChild;
         while (ent != null) 

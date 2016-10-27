@@ -16,7 +16,7 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="." />
+    <class path="src" />
   </classpaths>
   <!-- Build options -->
   <build>
@@ -30,6 +30,7 @@
   <!-- haxelib libraries -->
   <haxelib>
     <library name="buddy" />
+    <library name="mcover" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

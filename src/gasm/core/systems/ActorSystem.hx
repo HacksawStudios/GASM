@@ -1,7 +1,8 @@
 package gasm.core.systems;
-import gasm.core.enums.SystemType;
-import gasm.core.System;
 
+import gasm.core.System;
+import gasm.core.ISystem;
+import gasm.core.enums.SystemType;
 import gasm.core.enums.ComponentType;
 
 /**
