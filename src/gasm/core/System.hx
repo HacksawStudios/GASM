@@ -7,7 +7,7 @@ import haxe.EnumFlags;
  * ...
  * @author Leo Bergman
  */
-class System 
+class System
 {
 	public var type(default, null):SystemType;
 	public var componentFlags(default, null):EnumFlags<ComponentType>;

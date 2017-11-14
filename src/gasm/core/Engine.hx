@@ -14,7 +14,7 @@ import gasm.core.ISystem;
  * @author Leo Bergman
  */
 
-class Engine
+class Engine implements IEngine
 {
 	public var baseEntity(default, null):Entity;
 	var _systems:Array<ISystem>;

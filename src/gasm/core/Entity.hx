@@ -132,14 +132,6 @@ using haxe.macro.Tools;
         }
         return false;
     }
-
-#if display
-	public function get<T:Component>(componentClass:Class<T>):T 
-	{
-	}
-#else
-	
-#end
 	
 #if display
 public function get<T:Component>(componentClass:Class<T>):T 

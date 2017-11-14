@@ -2,7 +2,7 @@ package gasm.core.components;
 import gasm.core.enums.ComponentType;
 import gasm.core.Component;
 import gasm.core.enums.InteractionType;
-import gasm.core.events.base.InteractionEvent;
+import gasm.core.events.InteractionEvent;
 
 /**
  * Model to interface between different graphics backends.

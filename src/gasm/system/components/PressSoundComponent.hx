@@ -4,7 +4,7 @@ import gasm.core.components.SpriteModelComponent;
 import gasm.core.Component;
 import gasm.core.enums.ComponentType;
 import gasm.core.enums.InteractionType;
-import gasm.core.events.base.InteractionEvent;
+import gasm.core.events.InteractionEvent;
 
 /**
  * ...
