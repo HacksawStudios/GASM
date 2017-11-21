@@ -8,4 +8,5 @@ enum InteractionType
 	PRESS;
 	OVER;
 	OUT;
+	MOVE;
 }
