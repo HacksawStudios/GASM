@@ -6,9 +6,8 @@ import haxe.EnumFlags;
 /**
  * @author Leo Bergman
  */
-interface ISystem 
-{
-	var type(default, null):SystemType;
-	var componentFlags(default, null):EnumFlags<ComponentType>;
-	function update(comp:Component, delta:Float):Void;
+interface ISystem {
+    var type(default, null):SystemType;
+    var componentFlags(default, null):EnumFlags<ComponentType>;
+    function update(comp:Component, delta:Float):Void;
 }

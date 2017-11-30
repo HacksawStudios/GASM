@@ -9,16 +9,14 @@ import gasm.core.enums.ComponentType;
  * 
  * @author Leo Bergman
  */
-class SoundModelComponent extends Component
-{
-	public var volume(default, default):Float;
-	public var pan(default, default):Float;
-	public var pos(default, default):Float;
-	public var playing(default, default):Bool;
-	
-	public function new() 
-	{
-		componentType = ComponentType.SoundModel;
-	}
-	
+class SoundModelComponent extends Component {
+    public var volume(default, default):Float;
+    public var pan(default, default):Float;
+    public var pos(default, default):Float;
+    public var playing(default, default):Bool;
+
+    public function new() {
+        componentType = ComponentType.SoundModel;
+    }
+
 }

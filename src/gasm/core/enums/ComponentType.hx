@@ -4,17 +4,16 @@ package gasm.core.enums;
  * 
  * @author Leo Bergman
  */
-enum ComponentType
-{
-	Model;
-	ActiveModel;
+enum ComponentType {
+    Model;
+    ActiveModel;
     GraphicsModel;
-	Graphics3DModel;
+    Graphics3DModel;
     TextModel;
     SoundModel;
-	Actor;
+    Actor;
     Graphics;
     Graphics3D;
     Text;
-    Sound;   
+    Sound;
 }

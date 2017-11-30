@@ -7,11 +7,11 @@ import haxe.EnumFlags;
  * ...
  * @author Leo Bergman
  */
-class System
-{
-	public var type(default, null):SystemType;
-	public var componentFlags(default, null):EnumFlags<ComponentType>;
-	public function new() {
-		componentFlags = new EnumFlags<ComponentType>();
-	}
+class System {
+    public var type(default, null):SystemType;
+    public var componentFlags(default, null):EnumFlags<ComponentType>;
+
+    public function new() {
+        componentFlags = new EnumFlags<ComponentType>();
+    }
 }

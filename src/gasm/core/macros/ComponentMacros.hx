@@ -8,12 +8,11 @@ import haxe.macro.Tools;
  * ...
  * @author Leo Bergman
  */
-class ComponentMacros
-{
-	static var _index:Int = 0;
-	static var _types:Map<String, Int> = new Map<String, Int>();
+class ComponentMacros {
+    static var _index:Int = 0;
+    static var _types:Map<String, Int> = new Map<String, Int>();
 
-	#if macro
+    #if macro
 	/**
 	 * Will add name getters and constants to Components to speed up resolution.
 	 */

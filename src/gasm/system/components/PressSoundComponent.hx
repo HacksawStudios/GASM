@@ -11,17 +11,17 @@ import gasm.core.events.InteractionEvent;
  * @author Leo Bergman
  */
 class PressSoundComponent extends Component {
-	
-	public function new() {
-		componentType = ComponentType.Sound;
-	}
 
-	override public function init() {
-		var spriteModel = owner.get(SpriteModelComponent);
-		var soundModel = owner.get(SoundModelComponent);
-		spriteModel.addHandler(InteractionType.PRESS, function(e:InteractionEvent) {
-			soundModel.pos = 0;
-			soundModel.playing = true;
-		});
-	}
+    public function new() {
+        componentType = ComponentType.Sound;
+    }
+
+    override public function init() {
+        var spriteModel = owner.get(SpriteModelComponent);
+        var soundModel = owner.get(SoundModelComponent);
+        spriteModel.addHandler(InteractionType.PRESS, function(e:InteractionEvent) {
+            soundModel.pos = 0;
+            soundModel.playing = true;
+        });
+    }
 }

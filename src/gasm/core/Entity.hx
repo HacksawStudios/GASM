@@ -118,6 +118,7 @@ using haxe.macro.Tools;
 #if (display || dox)
     public function get<T:Component>(componentClass:Class<T>):T {}
 #else
+
     macro public function get<T:Component>(self:Expr, componentClass:ExprOf<Class<T>>):ExprOf<T> {
         var componentName = macro $componentClass.BASE_NAME;
         return macro Std.instance($self.getComponentByName($componentName), $componentClass);
@@ -127,6 +128,7 @@ using haxe.macro.Tools;
 #if (display || dox)
     public function getFromParents<T:Component> (componentClass:Class<T>):T {}
 #else
+
     macro public function getFromParents<T:Component>(self:Expr, componentClass:ExprOf<Class<T>>):ExprOf<T> {
         var name = macro $componentClass.BASE_NAME;
         return macro $self.getFromParentsByName($name, $componentClass);
@@ -217,11 +219,13 @@ using haxe.macro.Tools;
     public function dispose() {
         if (parent != null) {
             parent.removeChild(this);
+            parent = null;
         }
         while (firstComponent != null) {
             firstComponent.dispose();
+            firstComponent = firstComponent.next;
         }
         disposeChildren();
+        _compMap = new Map<String, Component>();
     }
-
 }

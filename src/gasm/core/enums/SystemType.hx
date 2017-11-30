@@ -5,9 +5,8 @@ package gasm.core.enums;
  * 
  * @author Leo Bergman
  */
-enum SystemType
-{
-	// Systems will execute according to their order here.
+enum SystemType {
+    // Systems will execute according to their order here.
     CORE;
     ACTOR;
     RENDERING;
