@@ -37,7 +37,7 @@ class Engine implements IEngine {
         });
         _systems = systems;
         _lastTime = Timer.stamp();
-        baseEntity = new Entity();
+        baseEntity = new Entity("base");
     }
 
     public function tick() {

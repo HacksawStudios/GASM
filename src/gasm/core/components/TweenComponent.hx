@@ -19,7 +19,7 @@ class TweenComponent extends Component {
 
     override public function init() {
         var model:SpriteModelComponent = owner.get(SpriteModelComponent);
-        if(model != null) {
+        if (model != null) {
             Actuate.tween(model, _duration, _properties).onComplete(_onComplete);
         } else {
             trace("warn", "Attempting to tween entity without a sprite model. Ensure you have a component with ComponentType.GRAPHICS in the entity you like to tween.");

@@ -5,7 +5,10 @@ package gasm.core.enums;
  */
 enum InteractionType {
     PRESS;
+    DRAG;
+    MOVE;
     OVER;
     OUT;
-    MOVE;
+    DOWN;
+    UP;
 }

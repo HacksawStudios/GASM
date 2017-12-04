@@ -1,4 +1,5 @@
 package gasm.core;
+import haxe.macro.Type.ClassType;
 import gasm.core.components.SoundModelComponent;
 import haxe.macro.Expr;
 import haxe.macro.Expr.ExprOf;
@@ -135,6 +136,16 @@ using haxe.macro.Tools;
     }
 #end
 
+    #if (display || dox)
+    public function getFromRoot<T:Component> (componentClass:Class<T>):T {}
+#else
+
+    macro public function getFromRoot<T:Component>(self:Expr, componentClass:ExprOf<Class<T>>):ExprOf<T> {
+        var name = macro $componentClass.BASE_NAME;
+        return macro $self.getFromRootByName($name, $componentClass);
+    }
+#end
+
     inline public function getComponentByName(name:String):Component {
         return _compMap.get(name);
     }
@@ -149,6 +160,21 @@ using haxe.macro.Tools;
             entity = entity.parent;
         };
         return null;
+    }
+
+    public function getFromRootByName<T:Component>(name:String, castToClass:Class<T>):T {
+        var component:T = null;
+        var retval:T = null;
+        var p = this;
+        var root = p;
+        while (p != null) {
+            component = cast p.getComponentByName(name);
+            if(component != null){
+                retval = component;
+            }
+            p = p.parent;
+        };
+        return cast retval;
     }
 
     /**
