@@ -2,5 +2,6 @@
 -cp src
 -cp test
 -lib buddy
+-lib actuate
 -D travis
 -D buddy-colors

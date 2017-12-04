@@ -12,9 +12,10 @@
 		"leo.bergman"
 	],
 	"releasenote": "See https://github.com/lbergman/gasm/blob/master/doc/changes.md",
-	"version": "0.0.1.0",
+	"version": "0.0.2",
 	"url": "https://github.com/lbergman/gasm",
 	 "dependencies": {
-	    "buddy": ""
+	    "buddy": "",
+		 "actuate": ""
 	  }
 }
