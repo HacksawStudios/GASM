@@ -75,14 +75,12 @@ using haxe.macro.Tools;
         }
         component.owner = this;
         component.next = null;
-        switch(component.componentType) {
-            case Graphics:
-                add(new SpriteModelComponent());
-            case Text:
-                add(new TextModelComponent());
-            case Sound:
-                add(new SoundModelComponent());
-            default:
+        if (component.componentType == Graphics) {
+            add(new SpriteModelComponent());
+        } else if(component.componentType == Text) {
+            add(new TextModelComponent());
+        } else if (component.componentType == Sound) {
+            add(new SoundModelComponent());
         }
         component.setup();
         return this;
