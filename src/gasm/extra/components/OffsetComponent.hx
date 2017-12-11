@@ -1,8 +1,8 @@
 package gasm.extra.components;
+import gasm.core.math.geom.Point;
 import gasm.core.Component;
 import gasm.core.components.SpriteModelComponent;
 import gasm.core.enums.ComponentType;
-import gasm.core.math.Point;
 
 /**
  * ...

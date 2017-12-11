@@ -1,4 +1,5 @@
 package gasm.core;
+import gasm.core.components.TextModelComponent;
 import haxe.macro.Type.ClassType;
 import gasm.core.components.SoundModelComponent;
 import haxe.macro.Expr;
@@ -74,11 +75,14 @@ using haxe.macro.Tools;
         }
         component.owner = this;
         component.next = null;
-        if (component.componentType == Graphics || component.componentType == Text) {
-            add(new SpriteModelComponent());
-        }
-        else if (component.componentType == Sound) {
-            add(new SoundModelComponent());
+        switch(component.componentType) {
+            case Graphics:
+                add(new SpriteModelComponent());
+            case Text:
+                add(new TextModelComponent());
+            case Sound:
+                add(new SoundModelComponent());
+            default:
         }
         component.setup();
         return this;
