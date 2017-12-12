@@ -3,7 +3,7 @@ package gasm.core.enums;
 /**
  * @author Leo Bergman
  */
-enum InteractionType {
+enum EventType {
     PRESS;
     DRAG;
     MOVE;
@@ -11,4 +11,5 @@ enum InteractionType {
     OUT;
     DOWN;
     UP;
+    RESIZE;
 }
