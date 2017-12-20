@@ -1,6 +1,5 @@
 package gasm.core.components;
 
-import gasm.core.math.geom.Box;
 import gasm.core.math.geom.LayoutBox;
 import gasm.core.math.geom.Rectangle;
 import gasm.core.enums.ScaleType;
@@ -29,15 +28,15 @@ class LayoutComponent extends Component {
     var _lastSpritePos:Point;
     var _displayDelay:Int;
 
-    public function new(horizontal:LayoutType, vertical:LayoutType, ?stageScale:ScaleType, ?margins:LayoutBox, displayDelay:Int = 0) {
-        _horizontal = horizontal;
-        _vertical = vertical;
+    public function new(config:LayoutConfig, displayDelay:Int = 0) {
+        _horizontal = config.horizontal;
+        _vertical = config.vertical;
 
-        if(margins == null) {
-            margins = {bottom:0, top:0, left:0, right:0};
+        if(config.margins == null) {
+            config.margins = {bottom:0, top:0, left:0, right:0};
         }
-        _margins = margins;
-        _stageScale = stageScale;
+        _margins = config.margins;
+        _stageScale = config.stageScale;
         _displayDelay = displayDelay;
         _originalSpriteRect = {x:0, y:0, w:0, h:0};
         _origStageSize = {x:0, y:0};
@@ -147,7 +146,13 @@ class LayoutComponent extends Component {
         _computedMargins.top = Math.isNaN(_computedMargins.top) ? 0 : _computedMargins.top;
         _computedMargins.left = Math.isNaN(_computedMargins.left) ? 0 : _computedMargins.left;
         _computedMargins.right = Math.isNaN(_computedMargins.right) ? 0 : _computedMargins.right;
-
-        trace("_computedMargins:" + _computedMargins);
     }
+}
+
+
+typedef LayoutConfig = {
+    horizontal:LayoutType,
+    vertical:LayoutType,
+    ?stageScale:ScaleType,
+    ?margins:LayoutBox,
 }
