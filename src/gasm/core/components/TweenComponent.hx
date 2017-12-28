@@ -7,22 +7,37 @@ import gasm.core.Component;
 
 class TweenComponent extends Component {
     var _properties:Dynamic;
+    var _startProperties:Dynamic;
     var _duration:Float;
-    var _onComplete:Void -> Void;
+    var _spriteModel:SpriteModelComponent;
+    var _completeFunc:Void -> Void;
 
-    public function new(properties:Dynamic, duration:Float, ?onComplete:Void -> Void) {
+    public function new(properties:Dynamic, duration:Float, startProperties:Dynamic = null) {
         componentType = ComponentType.Actor;
         _properties = properties;
-        _onComplete = onComplete;
+        _startProperties = startProperties;
         _duration = duration;
     }
 
     override public function init() {
-        var model:SpriteModelComponent = owner.get(SpriteModelComponent);
-        if (model != null) {
-            Actuate.tween(model, _duration, _properties).onComplete(function() {
-                if(_onComplete != null){
-                    _onComplete();
+        _spriteModel = owner.get(SpriteModelComponent);
+        if (_startProperties != null) {
+            for (field in Reflect.fields(_startProperties)) {
+                Reflect.setField(_spriteModel, field, Reflect.field(_startProperties, field));
+            }
+        }
+        tween();
+    }
+
+    public function onComplete(func:Void -> Void) {
+        _completeFunc = func;
+    }
+
+    inline function tween() {
+        if (_spriteModel != null) {
+            Actuate.tween(_spriteModel, _duration, _properties).onComplete(function() {
+                if (_completeFunc != null) {
+                    _completeFunc();
                 }
             });
         } else {

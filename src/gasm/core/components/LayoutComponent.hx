@@ -46,6 +46,10 @@ class LayoutComponent extends Component {
 
     override public function init() {
         _spriteModel = owner.get(SpriteModelComponent);
+        if(_spriteModel == null) {
+            trace('warn', 'No parent sprite in graph. Cannot use LayoutComponent without a parent.');
+            return;
+        }
         _spriteModel.addHandler(EventType.RESIZE, resize);
         _lastStageSize = {x:_spriteModel.stageSize.x, y:_spriteModel.stageSize.y};
         _lastSpriteSize = {x:_spriteModel.width, y:_spriteModel.height};
