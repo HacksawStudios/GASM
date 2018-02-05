@@ -16,6 +16,8 @@ class SpriteModelComponent extends Component {
     public var y(default, default):Float = 0;
     public var width(default, default):Float = -1;
     public var height(default, default):Float = -1;
+    public var origWidth(default, default):Float = -1;
+    public var origHeight(default, default):Float = -1;
     public var xScale(default, default):Float = 1;
     public var yScale(default, default):Float = 1;
     public var mouseX(default, default):Float = 0;
