@@ -1,48 +1,43 @@
 package gasm.core.components;
 
-import gasm.core.components.LayoutComponent.Align;
-import openfl.display.Shape;
-import gasm.core.components.SpriteModelComponent;
-import gasm.core.components.LayoutComponent.Align;
 import gasm.core.api.singnals.TResize;
+import gasm.core.components.LayoutComponent.Align;
+import gasm.core.components.LayoutComponent.Constraints;
+import gasm.core.components.LayoutComponent.LayoutBox;
+import gasm.core.components.SpriteModelComponent;
 import gasm.core.enums.ComponentType;
 import gasm.core.enums.EventType;
 import gasm.core.enums.ScaleType;
 import gasm.core.events.InteractionEvent;
 import gasm.core.math.geom.Point;
-import gasm.core.math.geom.Rectangle;
 import gasm.core.utils.Assert;
+import gasm.core.utils.Log;
+import jasper.Solver;
+import jasper.Variable;
 
 class LayoutComponent extends Component {
-    public var dirty:Bool = true;
 
-    public var layoutBox(default, null):LayoutBox;
-    public var spriteModel(default, null):SpriteModelComponent;
     public var computedMargins(get, null):Margins;
 
     public function get_computedMargins():Margins {
-        return calculateMargins(_margins, _parentLayout);
+        return calculateMargins(_margins, parent);
     }
-    public var computedSize(default, null):Float;
+
+    public var layoutBox(default, null):LayoutBox;
+    public var spriteModel(default, null):SpriteModelComponent;
     public var isRoot(default, null):Bool;
     public var freeze(default, default):Bool;
+    public var constraints:Constraints;
+    public var parent:LayoutComponent;
 
-    public var originalSpriteRect:Rectangle;
-    var _stageSize:Point;
-    var _origStageSize:Point;
     var _appModel:AppModelComponent;
     var _margins:Margins;
     var _computedPadding:Size;
-    var _lastStageSize:Point;
-    var _lastSpriteSize:Point;
-    var _lastSpritePos:Point;
     var _displayDelay:Int;
     var _parentBox:LayoutBox;
-    var _parentLayout:LayoutComponent;
     var _children:Array<LayoutComponent>;
 
     public function new(box:LayoutBox, displayDelay:Int = 0) {
-        trace("box:" + box);
         if (box.margins == null) {
             box.margins = {};
         }
@@ -62,30 +57,58 @@ class LayoutComponent extends Component {
             box.dock = Dock.NONE;
         }
         box.flow = box.flow != null ? box.flow : Flow.HORIZONTAL;
-        box.size = box.size != null ? box.size : {value:100, percent:true};
         box.vAlign = box.vAlign != null ? box.vAlign : Align.MID;
         box.hAlign = box.hAlign != null ? box.hAlign : Align.MID;
+        constraints = {
+            x:new Variable("x"),
+            y:new Variable("y"),
+            containerW:new Variable("containerW"),
+            containerH:new Variable("containerH"),
+            leftMarg:new Variable('leftMarg'),
+            rightMarg:new Variable('rightMarg'),
+            topMarg:new Variable('topMarg'),
+            bottomMarg:new Variable('bottomMarg'),
+            left:new Variable('left'),
+            center:new Variable('center'),
+            right:new Variable('right'),
+            top:new Variable('top'),
+            middle:new Variable('middle'),
+            bottom:new Variable('bottom'),
+            contentW:new Variable('contentW'),
+            contentH:new Variable('contentH'),
+            ypos:new Variable('ypos'),
+            xpos:new Variable('xpos'),
+            yMarg:new Variable('yMarg'),
+            xMarg:new Variable('xMarg'),
+            parentW:new Variable('parentW'),
+            parentH:new Variable('parentH'),
+            xScale:new Variable('xScale'),
+            yScale:new Variable('yScale'),
+        };
         layoutBox = box;
         _margins = box.margins;
         _displayDelay = displayDelay;
-        originalSpriteRect = {x:0, y:0, w:0, h:0};
-        _origStageSize = {x:0, y:0};
-        _stageSize = {x:0, y:0};
         _children = [];
         componentType = ComponentType.Actor;
     }
 
     override public function init() {
         spriteModel = owner.get(SpriteModelComponent);
-        Assert.that(spriteModel != null, 'No parent sprite in graph. Cannot use LayoutComponent without a parent.');
+        if (spriteModel == null) {
+            spriteModel = cast owner.get(TextModelComponent);
+            if (spriteModel == null) {
+                spriteModel = new SpriteModelComponent();
+            }
+        }
+         //Assert.that(spriteModel != null, 'No parent sprite in graph. Cannot use LayoutComponent without a parent.');
 
         _appModel = owner.getFromParents(AppModelComponent);
         Assert.that(_appModel != null, 'No AppModelComponent in graph. Check that your gasm integration context is adding it.');
 
-        _parentLayout = owner.parent != null ? owner.parent.getFromParents(LayoutComponent) : null;
-        if (_parentLayout != null) {
-            _parentLayout.addChild(this);
-            _parentBox = _parentLayout.layoutBox;
+        parent = owner.parent != null ? owner.parent.getFromParents(LayoutComponent) : null;
+        if (parent != null) {
+            parent.addChild(this);
+            _parentBox = parent.layoutBox;
         } else {
             isRoot = true;
         }
@@ -96,10 +119,6 @@ class LayoutComponent extends Component {
         });
 
         spriteModel.addHandler(EventType.RESIZE, onResize);
-        _lastStageSize = {x:spriteModel.stageSize.x, y:spriteModel.stageSize.y};
-        _lastSpriteSize = {x:spriteModel.width, y:spriteModel.height};
-        _lastSpritePos = {x:spriteModel.x, y:spriteModel.y};
-        originalSpriteRect = {x: spriteModel.x, y: spriteModel.y, w:spriteModel.width, h:spriteModel.height}
         layout();
 
         if (_displayDelay > 0) {
@@ -110,222 +129,272 @@ class LayoutComponent extends Component {
         }
     }
 
-    public function setSize(w:Float, h:Float) {
-        spriteModel.height = h;
-        spriteModel.width = w;
+
+    override public function dispose():Void {
+        freeze = true;
+        spriteModel = null;
+        layoutBox = null;
+        _children = null;
+        constraints = null;
+        parent = null;
+        super.dispose();
     }
 
-    function addChild(child:LayoutComponent) {
-        _children.push(child);
-    }
-
+    /**
+    * Perform layout. Will be called automatically on resize events.
+    **/
     public function layout() {
-        if (spriteModel.width > 0) {
-            if (originalSpriteRect.w <= 0) {
-                originalSpriteRect.x = spriteModel.x;
-                originalSpriteRect.y = spriteModel.y;
-                originalSpriteRect.w = spriteModel.width;
-                originalSpriteRect.h = spriteModel.height;
-            }
-        } else {
-            haxe.Timer.delay(layout, 100);
-            return;
-        }
-        if(freeze) {
+        if (freeze) {
             return;
         }
         scale();
     }
 
-    inline function scale() {
-        var w = layoutBox.scale != null ? originalSpriteRect.w : spriteModel.width;
-        var h = layoutBox.scale != null ? originalSpriteRect.h : spriteModel.height;
+    function addChild(child:LayoutComponent) {
+        _children.push(child);
+        layout();
+    }
+
+    function scale() {
+        if (spriteModel == null) {
+            haxe.Timer.delay(scale, 50);
+            return;
+        }
+        var w = layoutBox.scale != null ? spriteModel.origWidth : spriteModel.width;
+        var h = layoutBox.scale != null ? spriteModel.origHeight : spriteModel.height;
         var compartmentWidth:Float;
         var compartmentHeight:Float;
-        var margins = calculateMargins(_margins, _parentLayout);
-        computedSize = calculateSize(layoutBox.size, _parentLayout);
+        var margins = calculateMargins(_margins, parent);
         calculatePadding();
 
-        var ypos = margins.top.value;
-        var xpos = margins.left.value;
-        var xMarg = margins.right.value;
-        var yMarg = margins.bottom.value;
+        var ypos = 0.0;
+        var xpos = 0.0;
+        var xMarg = 0.0;
+        var yMarg = 0.0;
 
-        var dockedX:Float;
-        var dockedY:Float;
         var dockedLeft = getDocked(Dock.LEFT);
         var dockedTop = getDocked(Dock.TOP);
         var dockedRight = getDocked(Dock.RIGHT);
         var dockedBottom = getDocked(Dock.BOTTOM);
         var undocked = getDocked(Dock.NONE);
-        var parentSize = getComponentSize(_parentLayout);
-        var size = getComponentSize(this);
-        for (layoutComp in dockedTop) {
-            //layoutComp.layout();
-            var childBox = layoutComp.layoutBox;
-            var childMargins = layoutComp.computedMargins;
-            var xMargins = childMargins.right.value + childMargins.left.value;
-            var yMargins = childMargins.top.value + childMargins.bottom.value;
-            var targetWidth:Float = w - (xpos + xMarg);
-            var targetHeight:Float = layoutComp.spriteModel.height;
-            var containerW = size.x - xMargins;
-            var containerH = size.y - yMargins;
-            layoutComp.spriteModel.origWidth = layoutComp.originalSpriteRect.w;
-            layoutComp.spriteModel.origHeight = layoutComp.originalSpriteRect.h;
-            switch(layoutComp.layoutBox.scale) {
-                case ScaleType.PROPORTIONAL: scaleProportional(containerW, containerH, layoutComp.spriteModel);
-                case ScaleType.FIT: scaleFit(containerW, containerH, layoutComp.spriteModel);
-                default: layoutComp.setSize(targetWidth, targetHeight);
-            }
-            var actualWidth = layoutComp.spriteModel.width;
-            layoutComp.spriteModel.x = switch(childBox.hAlign) {
-                case Align.NEAR: childMargins.left.value;
-                case Align.MID: childMargins.left.value + (containerW - actualWidth) / 2;
-                case Align.FAR: containerW - (childMargins.right.value + actualWidth);
-            }
-            var actualHeight = layoutComp.spriteModel.height;
-            layoutComp.spriteModel.y = switch(childBox.vAlign) {
-                case Align.NEAR: childMargins.top.value;
-                case Align.MID: childMargins.top.value + ((size.y - childMargins.bottom.value) - actualHeight) / 2;
-                case Align.FAR: containerH - (childMargins.bottom.value + actualHeight);
-            }
-            ypos += layoutComp.spriteModel.height + _computedPadding.value + yMargins;
+        var allChildren = dockedLeft.concat(dockedRight).concat(dockedTop).concat(dockedBottom).concat(undocked);
+
+        if (!(allChildren.length > 0)) {
+            return;
         }
-        dockedY = ypos;
+        var parentSize = getComponentSize(parent);
+        var size = getComponentSize(this);
+        var scale = getComponentScale(this);
+        for (layoutComp in dockedTop) {
+            var c = layoutComp.constraints;
+            var solver = new Solver();
+            solver.addConstraint(c.xMarg == xMarg);
+            solver.addConstraint(c.yMarg == yMarg);
+            solver.addConstraint(c.xpos == xpos);
+            solver.addConstraint(c.ypos == ypos);
+
+            solver.addConstraint(c.left == c.leftMarg);
+            solver.addConstraint(c.right <= c.containerW - (c.contentW + c.rightMarg));
+            solver.addConstraint(c.center == c.left + (c.containerW - (c.contentW + c.leftMarg + c.rightMarg)) / 2);
+            solver.addConstraint(c.top == c.ypos + c.topMarg);
+            solver.addConstraint(c.bottom == c.ypos + c.containerH - (c.contentH + c.bottomMarg));
+            solver.addConstraint(c.middle == c.top + (c.containerH - (c.contentH + c.topMarg + c.bottomMarg)) / 2);
+            layoutItem(layoutComp, solver, constraints, size, parentSize, scale, Flow.VERTICAL);
+            ypos += c.containerH.m_value + _computedPadding.value;
+        }
         for (layoutComp in dockedBottom) {
-            var childMargins = layoutComp.computedMargins;
-            var childBox = layoutComp.layoutBox;
-            var xMargins = childMargins.right.value + childMargins.left.value;
-            var yMargins = childMargins.top.value + childMargins.bottom.value;
-            var targetWidth:Float = w - (xpos + xMarg);
-            var targetHeight:Float = layoutComp.spriteModel.height;
-            var containerW = parentSize.x - xMargins;
-            var containerH = parentSize.y - yMargins;
-            targetWidth -= xMargins;
-            targetHeight = containerH = childBox.size.percent ? size.y * (childBox.size.value / 100) : childBox.size.value;
-            switch(layoutComp.layoutBox.scale) {
-                case ScaleType.PROPORTIONAL: scaleProportional(containerW, containerH, layoutComp.spriteModel);
-                case ScaleType.FIT: scaleFit(containerW, containerH, layoutComp.spriteModel);
-                default: layoutComp.setSize(targetWidth, targetHeight);
-            }
-            layoutComp.spriteModel.x = childMargins.left.value;
-            layoutComp.spriteModel.y = parentSize.y + childMargins.top.value - (yMarg + layoutComp.spriteModel.height + childMargins.bottom.value);
-            yMarg += layoutComp.spriteModel.height + _computedPadding.value;
+            var c = layoutComp.constraints;
+            var solver = new Solver();
+            solver.addConstraint(c.xMarg == xMarg);
+            solver.addConstraint(c.yMarg == yMarg);
+            solver.addConstraint(c.xpos == xpos);
+            solver.addConstraint(c.ypos == ypos);
+
+            solver.addConstraint(c.left == c.leftMarg);
+            solver.addConstraint(c.right == c.containerW - (c.contentW + c.rightMarg));
+            solver.addConstraint(c.center == c.left + (c.containerW - (c.contentW)) / 2);
+            solver.addConstraint(c.top == c.topMarg + c.parentH - (c.containerH));
+            solver.addConstraint(c.middle == c.parentH - (c.yMarg + c.containerH - (c.containerH - c.contentH) / 2));
+            solver.addConstraint(c.bottom == c.parentH - (c.yMarg + c.containerH - (c.contentH - c.bottomMarg)));
+            layoutItem(layoutComp, solver, constraints, size, parentSize, scale, Flow.VERTICAL);
+            yMarg += c.containerH.m_value + _computedPadding.value + c.topMarg.m_value + c.bottomMarg.m_value;
         }
         for (layoutComp in dockedLeft) {
-            var childMargins = layoutComp.computedMargins;
-            var childBox = layoutComp.layoutBox;
-            var xMargins = childMargins.right.value + childMargins.left.value + xMarg + xpos;
-            var yMargins = childMargins.top.value + childMargins.bottom.value + yMarg + ypos;
-            var containerW = parentSize.x - xMargins;
-            var containerH = parentSize.y - yMargins;
-            var targetWidth:Float = w - (xpos + xMarg);
-            var targetHeight:Float = layoutComp.spriteModel.height - yMarg;
-            targetWidth = containerW = childBox.size.percent ? size.x * (childBox.size.value / 100) : childBox.size.value;
-            targetHeight -= yMargins;
-            switch(layoutComp.layoutBox.scale) {
-                case ScaleType.PROPORTIONAL: scaleProportional(containerW, containerH, layoutComp.spriteModel);
-                case ScaleType.FIT: scaleFit(containerW, containerH, layoutComp.spriteModel);
-                default: layoutComp.setSize(targetWidth, targetHeight);
-            }
-            layoutComp.spriteModel.x = xpos + childMargins.left.value;
-            layoutComp.spriteModel.y = ypos + childMargins.top.value;
-            xpos += layoutComp.spriteModel.width + _computedPadding.value;
+            var c = layoutComp.constraints;
+            var solver = new Solver();
+            solver.addConstraint(c.xMarg == xMarg);
+            solver.addConstraint(c.yMarg == yMarg);
+            solver.addConstraint(c.xpos == xpos);
+            solver.addConstraint(c.ypos == ypos);
+
+            solver.addConstraint(c.left == c.xpos + c.leftMarg);
+            solver.addConstraint(c.right <= c.xpos + c.containerW - (c.contentW + c.rightMarg));
+            solver.addConstraint(c.center == c.xpos + c.left + (c.containerW - (c.contentW + c.leftMarg + c.rightMarg + c.xpos)) / 2);
+            solver.addConstraint(c.top >= c.ypos + c.topMarg);
+            solver.addConstraint(c.middle == c.top + (c.containerH - c.contentH) / 2);
+            solver.addConstraint(c.bottom <= c.containerH - (c.contentH + c.bottomMarg + c.ypos));
+            layoutItem(layoutComp, solver, constraints, size, parentSize, scale, Flow.HORIZONTAL);
+            xpos += c.containerW.m_value + _computedPadding.value + c.leftMarg.m_value + c.rightMarg.m_value;
         }
-        dockedX = xpos;
         for (layoutComp in dockedRight) {
-            var childMargins = layoutComp.computedMargins;
-            var childBox = layoutComp.layoutBox;
-            var xMargins = childMargins.right.value + childMargins.left.value + xMarg + xpos;
-            var yMargins = childMargins.top.value + childMargins.bottom.value + yMarg + ypos;
-            var containerW = parentSize.x - xMargins;
-            var containerH = parentSize.y - yMargins;
-            var targetWidth:Float = parentSize.x - (xpos + xMarg);
-            var targetHeight:Float = layoutComp.spriteModel.height - yMarg;
-            targetWidth = containerW = childBox.size.percent ? size.x * (childBox.size.value / 100) : childBox.size.value;
-            targetHeight -= yMargins;
-            switch(layoutComp.layoutBox.scale) {
-                case ScaleType.PROPORTIONAL: scaleProportional(containerW, containerH, layoutComp.spriteModel);
-                case ScaleType.FIT: scaleFit(containerW, containerH, layoutComp.spriteModel);
-                default: layoutComp.setSize(targetWidth, targetHeight);
-            }
-            layoutComp.spriteModel.x = parentSize.x - (xMarg + layoutComp.spriteModel.width + childMargins.right.value);
-            layoutComp.spriteModel.y = ypos + childMargins.top.value;
-            xMarg += layoutComp.spriteModel.width + _computedPadding.value;
+            var c = layoutComp.constraints;
+            var solver = new Solver();
+            solver.addConstraint(c.xMarg == xMarg);
+            solver.addConstraint(c.yMarg == yMarg);
+            solver.addConstraint(c.xpos == xpos);
+            solver.addConstraint(c.ypos == ypos);
+
+            solver.addConstraint(c.left == (c.leftMarg + c.parentW - (c.containerW + c.xMarg)));
+            solver.addConstraint(c.right == c.parentW - (c.contentW + c.rightMarg + c.xMarg));
+            solver.addConstraint(c.center == c.leftMarg - c.xMarg + c.parentW - c.containerW + ((c.containerW - (c.contentW + c.leftMarg + c.rightMarg)) / 2));
+            solver.addConstraint(c.top >= c.ypos + c.topMarg);
+            solver.addConstraint(c.middle == c.top + (c.containerH - (c.contentH + c.topMarg + c.bottomMarg)) / 2);
+            solver.addConstraint(c.bottom == c.containerH - (c.contentH + c.bottomMarg));
+            layoutItem(layoutComp, solver, constraints, size, parentSize, scale, Flow.HORIZONTAL);
+            xMarg += c.containerW.m_value + _computedPadding.value + c.leftMarg.m_value + c.rightMarg.m_value;
         }
-        compartmentWidth = (w - (xpos + xMarg)) / dockedBottom.length;
+        //var paddingTotal:Float = (_computedPadding.value * (undocked.length - 1));
 
-        xpos = dockedX;
-        ypos = dockedY;
-        var paddingTotal:Float = (_computedPadding.value * (undocked.length - 1));
-        if (layoutBox.flow == Flow.VERTICAL) {
-            compartmentWidth = (w - (xpos + xMarg));
-            compartmentHeight = (h - (ypos + yMarg + paddingTotal)) / undocked.length;
-            for (layoutComp in undocked) {
-                /*
-                var childMargins = layoutComp.computedMargins;
-            var xMargins = childMargins.right.value + childMargins.left.value;
-            var yMargins = childMargins.top.value + childMargins.bottom.value;
-            var targetWidth:Float = w - (xpos + xMarg);
-            var targetHeight:Float = layoutComp.spriteModel.height;
-            var containerW = parentSize.x - xMargins;
-            var containerH = parentSize.y - yMargins;
-            if (layoutComp.computedSize > 0) {
-                targetHeight = containerH = layoutComp.computedSize;
-            } else {
-                targetWidth -= xMargins;
-                targetHeight -= yMargins;
-            }
+        for (layoutComp in undocked) {
+            var c = layoutComp.constraints;
+            var solver = new Solver();
+            solver.addConstraint(c.xMarg == xMarg);
+            solver.addConstraint(c.yMarg == yMarg);
+            solver.addConstraint(c.xpos == xpos);
+            solver.addConstraint(c.ypos == ypos);
 
-            switch(layoutComp.layoutBox.scale) {
-                case ScaleType.PROPORTIONAL: scaleProportional(containerW, containerH, layoutComp.spriteModel);
-                case ScaleType.FIT: scaleFit(containerW, containerH, layoutComp.spriteModel);
-                default: layoutComp.setSize(targetWidth, targetHeight);
-            }
+            solver.addConstraint(c.left == c.xpos + c.leftMarg);
+            solver.addConstraint(c.right <= c.xpos + c.leftMarg + c.parentW - (c.contentW + c.rightMarg + c.leftMarg));
+            solver.addConstraint(c.center == c.xpos + c.left + (c.parentW - (c.contentW + c.leftMarg + c.rightMarg)) / 2);
+            solver.addConstraint(c.top == c.ypos + c.topMarg);
+            solver.addConstraint(c.bottom <= c.ypos + c.containerH - (c.yMarg + c.contentH + c.bottomMarg));
+            solver.addConstraint(c.middle == c.ypos + c.top + (c.containerH - (c.contentH + c.bottomMarg + c.topMarg)) / 2);
+
+            layoutItem(layoutComp, solver, constraints, size, parentSize, scale, layoutComp.layoutBox.flow);
             if (layoutBox.flow == Flow.VERTICAL) {
-                layoutComp.spriteModel.y = switch(layoutBox.align) {
-                    case Align.NEAR: layoutComp.computedMargins.top.value;
-                    case Align.MID: layoutComp.computedMargins.top.value + (containerH - layoutComp.spriteModel.height) / 2;
-                    case Align.FAR: containerW - (layoutComp.spriteModel.height + childMargins.bottom.value);
-                }
-                layoutComp.spriteModel.x = childMargins.left.value;
+                ypos += c.containerH.m_value + _computedPadding.value;
             } else {
-                layoutComp.spriteModel.x = switch(layoutBox.align) {
-                    case Align.NEAR: layoutComp.computedMargins.left.value;
-                    case Align.MID: layoutComp.computedMargins.left.value + (containerW - layoutComp.spriteModel.width) / 2;
-                    case Align.FAR: containerH - (layoutComp.spriteModel.width + childMargins.right.value);
-                }
-                layoutComp.spriteModel.y = childMargins.top.value;
-            }
-            ypos += layoutComp.spriteModel.height + _computedPadding.value;
-                 */
-                layoutComp.setSize(w - (xpos + xMarg), compartmentHeight);
-                layoutComp.spriteModel.x = xpos + ((compartmentWidth - layoutComp.spriteModel.width) / 2);
-                layoutComp.spriteModel.y = switch(layoutBox.vAlign) {
-                    case Align.NEAR: ypos + computedMargins.top.value;
-                    case Align.MID: Math.max(0, ypos + ((compartmentHeight - layoutComp.spriteModel.height) / 2));
-                    case Align.FAR: compartmentHeight - (layoutComp.spriteModel.height + computedMargins.bottom.value);
-                };
-                ypos += layoutComp.spriteModel.height + _computedPadding.value;
-            }
-        } else {
-            compartmentWidth = (w - (xpos + xMarg + paddingTotal)) / undocked.length;
-            compartmentHeight = (h - (ypos + yMarg));
-            for (layoutComp in undocked) {
-                switch(layoutComp.layoutBox.scale) {
-                    case ScaleType.PROPORTIONAL: scaleProportional(compartmentWidth, compartmentHeight, layoutComp.spriteModel);
-                    case ScaleType.FIT: scaleFit(compartmentWidth, compartmentHeight, layoutComp.spriteModel);
-                }
-                layoutComp.spriteModel.x = switch(layoutBox.hAlign) {
-                    case Align.NEAR: xpos + layoutComp.computedMargins.left.value;
-                    case Align.MID: Math.max(0, xpos + ((compartmentWidth - layoutComp.spriteModel.width) / 2));
-                    case Align.FAR: compartmentWidth - (layoutComp.spriteModel.width + layoutComp.computedMargins.right.value);
-                };
-                layoutComp.spriteModel.y = ypos + ((compartmentHeight - layoutComp.spriteModel.height) / 2);
-                xpos += compartmentWidth + _computedPadding.value;
+                xpos += c.containerW.m_value + _computedPadding.value + c.leftMarg.m_value + c.rightMarg.m_value;
             }
         }
     }
+
+    function layoutItem(layoutComp:LayoutComponent, solver:Solver, parentConstraints:Constraints, size:Point, parentSize:Point, scale:Point, flow:Flow) {
+        if (layoutComp.spriteModel == null) {
+            Log.warn('Attempting to layout en element which does not have a sprite model.');
+            return;
+        }
+        var c = layoutComp.constraints;
+
+        var childBox = layoutComp.layoutBox;
+        trace(layoutComp.layoutBox.name + "::" + layoutComp.spriteModel.origWidth);
+
+        var childMargins = layoutComp.computedMargins;
+        var xMargins = childMargins.right.value + childMargins.left.value;
+        var yMargins = childMargins.top.value + childMargins.bottom.value;
+        var parentW = constraints.contentW.m_value > 0 ? constraints.contentW.m_value / constraints.xScale.m_value : parentSize.x;
+        var parentH = constraints.contentH.m_value > 0 ? constraints.contentH.m_value / constraints.yScale.m_value : parentSize.y;
+        solver.addConstraint(c.parentW == parentW);
+        solver.addConstraint(c.parentH == parentH);
+        solver.addConstraint(c.leftMarg == childMargins.left.value);
+        solver.addConstraint(c.rightMarg == childMargins.right.value);
+        solver.addConstraint(c.topMarg == childMargins.top.value);
+        solver.addConstraint(c.bottomMarg == childMargins.bottom.value);
+
+        var containerW:Float;
+        var containerH:Float;
+        var hasDimensions = layoutComp.spriteModel.origWidth > 0 && layoutComp.spriteModel.origHeight > 0;
+        if (childBox.size == null) {
+            if (hasDimensions) {
+                switch(flow) {
+                    case Flow.VERTICAL:
+                        childBox.size = {value:layoutComp.spriteModel.origHeight};
+                    case Flow.HORIZONTAL:
+                        childBox.size = {value:layoutComp.spriteModel.origWidth};
+                }
+            }
+        }
+        if (childBox.size != null) {
+            switch(flow) {
+                case Flow.VERTICAL:
+                    containerW = parentW;
+                    if (childBox.size.percent) {
+                        containerH = (childBox.size.value * parentH) / 100;
+                    } else {
+                        containerH = childBox.size.value;
+                    }
+                case Flow.HORIZONTAL:
+                    containerH = parentH;
+                    if (childBox.size.percent) {
+                        containerW = (childBox.size.value * parentW) / 100;
+                    } else {
+                        containerW = childBox.size.value;
+                    }
+                default:
+                    containerW = parentW;
+                    containerH = parentH;
+            }
+        } else {
+            containerW = parentSize.x;
+            containerH = parentSize.y;
+        }
+
+        var scaledH:Float;
+        var scaledW:Float;
+        var xScale:Float = 1.0;
+        var yScale:Float = 1.0;
+        if (childBox.scale == ScaleType.PROPORTIONAL) {
+            var parent:LayoutComponent = layoutComp.owner.getFromParents(LayoutComponent);
+            var origW = layoutComp.spriteModel.origWidth > 0 ? layoutComp.spriteModel.origWidth : size.x;
+            var origH = layoutComp.spriteModel.origHeight > 0 ? layoutComp.spriteModel.origHeight : size.y;
+            var ratio = Math.min((containerW - xMargins) / origW, (containerH - yMargins) / origH);
+            scaledW = origW * ratio;
+            scaledH = origH * ratio;
+            xScale = ratio;
+            yScale = ratio;
+        } else if (childBox.scale == ScaleType.FIT) {
+            scaledW = containerW - xMargins;
+            scaledH = containerH - yMargins;
+            xScale = (containerW - xMargins) / layoutComp.spriteModel.origWidth;
+            yScale = (containerH - yMargins) / layoutComp.spriteModel.origHeight;
+        } else if (layoutComp.spriteModel.origWidth > 0 && layoutComp.spriteModel.origHeight > 0) {
+            scaledW = layoutComp.spriteModel.origWidth;
+            scaledH = layoutComp.spriteModel.origHeight;
+        } else {
+            scaledW = layoutComp.spriteModel.origWidth = c.contentW.m_value > 0 ? c.contentW.m_value : (containerW - xMargins);
+            scaledH = layoutComp.spriteModel.origHeight = c.contentH.m_value > 0 ? c.contentH.m_value : (containerH - yMargins);
+        }
+        solver.addConstraint(c.xScale == xScale);
+        solver.addConstraint(c.yScale == yScale);
+        solver.addConstraint(c.contentW == scaledW);
+        solver.addConstraint(c.contentH == scaledH);
+        solver.addConstraint(c.containerW == containerW);
+        solver.addConstraint(c.containerH == containerH);
+        switch(childBox.hAlign) {
+            case Align.NEAR:
+                solver.addConstraint(c.x == c.left);
+            case Align.MID:
+                solver.addConstraint(c.x == c.center);
+            case Align.FAR:
+                solver.addConstraint(c.x == c.right);
+        }
+        switch(childBox.vAlign) {
+            case Align.NEAR:
+                solver.addConstraint(c.y >= c.top);
+            case Align.MID:
+                solver.addConstraint(c.y == c.middle);
+            case Align.FAR:
+                solver.addConstraint(c.y <= c.bottom);
+        }
+        solver.updateVariables();
+        layoutComp.spriteModel.x = c.x.m_value;
+        layoutComp.spriteModel.y = c.y.m_value;
+        layoutComp.spriteModel.width = scaledW;
+        layoutComp.spriteModel.height = scaledH;
+        layoutComp.spriteModel.xScale = xScale;
+        layoutComp.spriteModel.yScale = yScale;
+    }
+
     inline function getDocked(dock:Dock):Array<LayoutComponent> {
         var a:Array<LayoutComponent> = [];
         for (child in _children) {
@@ -334,68 +403,6 @@ class LayoutComponent extends Component {
             }
         }
         return a;
-    }
-
-    inline function isDirty():Bool {
-        var currStageSize:Point = {x:spriteModel.stageSize.x, y:spriteModel.stageSize.y};
-        var currSpriteSize:Point = {x:spriteModel.width, y:spriteModel.height};
-        var currSpritePos:Point = {x:spriteModel.x, y:spriteModel.y};
-        if (currStageSize.x != _lastStageSize.x || currStageSize.y != _lastStageSize.y
-        || currSpriteSize.x != _lastSpriteSize.x || currSpriteSize.y != _lastSpriteSize.y
-        || currSpritePos.x != _lastSpritePos.x || currSpritePos.y != _lastSpritePos.y) {
-            dirty = true;
-            _lastStageSize = currStageSize;
-            _lastSpriteSize = currSpriteSize;
-            _lastSpritePos = currSpritePos;
-        }
-
-        return dirty;
-    }
-
-    inline function scaleProportional(containerW:Float, containerH:Float, child:SpriteModelComponent) {
-        if (!(containerW > 0) || !(containerH > 0)) {
-            return;
-        }
-
-/*
-        var childW = child.width;
-        var childH = child.height;
-        if (childW > containerW) {
-            childH = childH * (containerW / childW);
-            childW = containerW;
-            if (childH > containerH) {
-                childW = childH * (containerH / childH);
-                childH = containerH;
-            }
-        } else if (childH > containerH) {
-            childW = childW * (containerH / childH);
-            childH = containerH;
-            if (childW > containerW) {
-                childH = childH * (containerW / childW);
-                childW = containerW;
-            }
-        }
-
-        child.width = childW;
-        child.height = childH;
-*/
-
-        // 450 / 300 = 1.5 600 / 300 = 2
-        // 450, 450
-
-        var ratio = Math.min(containerW / child.origWidth, containerH / child.origHeight);
-        if (ratio > 0) {
-            child.height = child.origHeight * ratio;
-            child.width = child.origWidth * ratio;
-            child.xScale = ratio;
-            child.yScale = ratio;
-
-        }
-    }
-
-    inline function scaleFit(containerW:Float, containerH:Float, child:SpriteModelComponent) {
-        child.xScale = containerW / child.origWidth;
-        child.yScale = containerH / child.origHeight;
     }
 
     inline function calculateSize(size:Size, parent:LayoutComponent):Float {
@@ -425,7 +432,35 @@ class LayoutComponent extends Component {
     inline function getComponentSize(layout:LayoutComponent):Point {
         var w = layout != null && !layout.isRoot ? layout.spriteModel.width : _appModel.stageSize.x;
         var h = layout != null && !layout.isRoot ? layout.spriteModel.height : _appModel.stageSize.y;
+        if (layout != null) {
+            if (layout.layoutBox.size != null) {
+                if (layout.layoutBox.flow == Flow.VERTICAL) {
+                    if (layout.layoutBox.size.percent) {
+                        h = (layout.layoutBox.size.value * h) / 100;
+                    } else {
+                        h = layout.layoutBox.size.value;
+                    }
+                } else {
+                    if (layout.layoutBox.size.percent) {
+                        w = (layout.layoutBox.size.value * w) / 100;
+                    } else {
+                        w = layout.layoutBox.size.value;
+                    }
+                }
+            }
+        }
+
         return {x:w, y:h};
+    }
+
+    inline function getComponentScale(layout:LayoutComponent):Point {
+        var x = 1.0;
+        var y = 1.0;
+        if (layout != null) {
+            x = layout.spriteModel.xScale;
+            y = layout.spriteModel.yScale;
+        }
+        return {x:x, y:y};
     }
 
     inline function calculatePadding() {
@@ -445,6 +480,9 @@ class LayoutComponent extends Component {
     }
 }
 
+/**
+* Layout definition, used to defina layout for a box.
+**/
 typedef LayoutBox = {
 ?margins:Margins,
 ?dock:Dock,
@@ -455,8 +493,12 @@ typedef LayoutBox = {
 ?vAlign:Align,
 ?hAlign:Align,
 ?name:String,
+?dimensions:Point,
 }
 
+/**
+* Margins definition with sizes for each edge.
+**/
 typedef Margins = {
 ?bottom:Size,
 ?top:Size,
@@ -464,9 +506,46 @@ typedef Margins = {
 ?right:Size,
 }
 
+/**
+* Size definition.
+**/
 typedef Size = {
 value:Float,
 ?percent:Bool,
+}
+
+/**
+* Constraint variables used to calculate layout
+**/
+typedef Constraints = {
+x:Variable,
+y:Variable,
+    // Width of container, including margins
+containerW:Variable,
+    // Height of container, including margins
+containerH:Variable,
+leftMarg:Variable,
+rightMarg:Variable,
+topMarg:Variable,
+bottomMarg:Variable,
+left:Variable,
+center:Variable,
+right:Variable,
+top:Variable,
+middle:Variable,
+bottom:Variable,
+    // Width of content, excluding margins
+contentW:Variable,
+    // Height of content, excluding margins
+contentH:Variable,
+ypos:Variable,
+xpos:Variable,
+yMarg:Variable,
+xMarg:Variable,
+parentW:Variable,
+parentH:Variable,
+xScale:Variable,
+yScale:Variable,
 }
 
 /**

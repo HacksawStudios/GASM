@@ -1,5 +1,6 @@
 package gasm.core.components;
 
+import motion.actuators.GenericActuator;
 import motion.Actuate;
 import gasm.core.components.SpriteModelComponent;
 import gasm.core.enums.ComponentType;
@@ -11,6 +12,7 @@ class TweenComponent extends Component {
     var _duration:Float;
     var _spriteModel:SpriteModelComponent;
     var _completeFunc:Void -> Void;
+    var _updateFunc:Void -> Void;
 
     public function new(properties:Dynamic, duration:Float, startProperties:Dynamic = null) {
         componentType = ComponentType.Actor;
@@ -33,11 +35,21 @@ class TweenComponent extends Component {
         _completeFunc = func;
     }
 
+    public function onUpdate(func:Void -> Void) {
+        _updateFunc = func;
+    }
+
     inline function tween() {
         if (_spriteModel != null) {
-            Actuate.tween(_spriteModel, _duration, _properties).onComplete(function() {
+            var tween:GenericActuator<SpriteModelComponent> = Actuate.tween(_spriteModel, _duration, _properties);
+            tween.onComplete(function() {
                 if (_completeFunc != null) {
                     _completeFunc();
+                }
+            });
+            tween.onUpdate(function() {
+                if (_updateFunc != null) {
+                    _updateFunc();
                 }
             });
         } else {
