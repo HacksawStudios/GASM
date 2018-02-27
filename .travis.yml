@@ -32,5 +32,5 @@ script:
   #- haxelib run travix flash
   - haxelib run travix java
   - haxelib run travix cpp
-  - haxelib run travix cs
+  #- haxelib run travix cs
   - haxelib run travix php7
