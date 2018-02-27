@@ -218,12 +218,12 @@ using haxe.macro.Tools;
             if (current == entity) {
                 if (prev == null) {
                     firstChild = next;
-                }
-                else {
+                } else {
                     prev.next = next;
                 }
                 current.parent = null;
                 current.next = null;
+                current.dispose();
                 return;
             }
             prev = current;

@@ -20,7 +20,7 @@ class LayoutComponent extends Component {
     public var computedMargins(get, null):Margins;
 
     public function get_computedMargins():Margins {
-        return calculateMargins(_margins, parent);
+        return calculateMargins(layoutBox.margins, parent);
     }
 
     public var layoutBox(default, null):LayoutBox;
@@ -31,28 +31,13 @@ class LayoutComponent extends Component {
     public var parent:LayoutComponent;
 
     var _appModel:AppModelComponent;
-    var _margins:Margins;
     var _computedPadding:Size;
     var _displayDelay:Int;
     var _parentBox:LayoutBox;
     var _children:Array<LayoutComponent>;
 
     public function new(box:LayoutBox, displayDelay:Int = 0) {
-        if (box.margins == null) {
-            box.margins = {};
-        }
-        if (box.margins.left == null) {
-            box.margins.left = {value:0};
-        }
-        if (box.margins.right == null) {
-            box.margins.right = {value:0};
-        }
-        if (box.margins.top == null) {
-            box.margins.top = {value:0};
-        }
-        if (box.margins.bottom == null) {
-            box.margins.bottom = {value:0};
-        }
+        box.margins = initMargins(box.margins);
         if (box.dock == null) {
             box.dock = Dock.NONE;
         }
@@ -86,7 +71,6 @@ class LayoutComponent extends Component {
             yScale:new Variable('yScale'),
         };
         layoutBox = box;
-        _margins = box.margins;
         _displayDelay = displayDelay;
         _children = [];
         componentType = ComponentType.Actor;
@@ -100,7 +84,6 @@ class LayoutComponent extends Component {
                 spriteModel = new SpriteModelComponent();
             }
         }
-         //Assert.that(spriteModel != null, 'No parent sprite in graph. Cannot use LayoutComponent without a parent.');
 
         _appModel = owner.getFromParents(AppModelComponent);
         Assert.that(_appModel != null, 'No AppModelComponent in graph. Check that your gasm integration context is adding it.');
@@ -115,7 +98,6 @@ class LayoutComponent extends Component {
 
         _appModel.resizeSignal.connect(function(size:TResize) {
             layout();
-            haxe.Timer.delay(layout, 200);
         });
 
         spriteModel.addHandler(EventType.RESIZE, onResize);
@@ -131,13 +113,12 @@ class LayoutComponent extends Component {
 
 
     override public function dispose():Void {
+        super.dispose();
         freeze = true;
         spriteModel = null;
-        layoutBox = null;
         _children = null;
         constraints = null;
         parent = null;
-        super.dispose();
     }
 
     /**
@@ -164,7 +145,7 @@ class LayoutComponent extends Component {
         var h = layoutBox.scale != null ? spriteModel.origHeight : spriteModel.height;
         var compartmentWidth:Float;
         var compartmentHeight:Float;
-        var margins = calculateMargins(_margins, parent);
+        var margins = calculateMargins(layoutBox.margins, parent);
         calculatePadding();
 
         var ypos = 0.0;
@@ -287,8 +268,6 @@ class LayoutComponent extends Component {
         var c = layoutComp.constraints;
 
         var childBox = layoutComp.layoutBox;
-        trace(layoutComp.layoutBox.name + "::" + layoutComp.spriteModel.origWidth);
-
         var childMargins = layoutComp.computedMargins;
         var xMargins = childMargins.right.value + childMargins.left.value;
         var yMargins = childMargins.top.value + childMargins.bottom.value;
@@ -398,7 +377,7 @@ class LayoutComponent extends Component {
     inline function getDocked(dock:Dock):Array<LayoutComponent> {
         var a:Array<LayoutComponent> = [];
         for (child in _children) {
-            if (child.layoutBox.dock == dock) {
+            if (child.layoutBox != null && child.layoutBox.dock == dock) {
                 a.push(child);
             }
         }
@@ -421,6 +400,7 @@ class LayoutComponent extends Component {
 
     inline function calculateMargins(margins:Margins, parent:LayoutComponent):Margins {
         var parentSize = getComponentSize(parent);
+        margins = initMargins(margins);
         return {
             bottom: {value:margins.bottom.percent ? parentSize.y * (margins.bottom.value / 100) : margins.bottom.value},
             top: {value:margins.top.percent ? parentSize.y * (margins.top.value / 100) : margins.top.value},
@@ -473,6 +453,25 @@ class LayoutComponent extends Component {
             value = layoutBox.padding.value;
         }
         _computedPadding = {value:value};
+    }
+
+    inline function initMargins(margins:Margins):Margins {
+        if (margins == null) {
+            margins = {};
+        }
+        if (margins.left == null) {
+            margins.left = {value:0};
+        }
+        if (margins.right == null) {
+            margins.right = {value:0};
+        }
+        if (margins.top == null) {
+            margins.top = {value:0};
+        }
+        if (margins.bottom == null) {
+            margins.bottom = {value:0};
+        }
+        return margins;
     }
 
     inline function onResize(event:InteractionEvent) {
