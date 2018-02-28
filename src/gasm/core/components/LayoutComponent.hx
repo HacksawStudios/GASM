@@ -104,9 +104,10 @@ class LayoutComponent extends Component {
         layout();
 
         if (_displayDelay > 0) {
+            var visibility = spriteModel.visible;
             spriteModel.visible = false;
             haxe.Timer.delay(function() {
-                spriteModel.visible = true;
+                spriteModel.visible = visibility;
             }, _displayDelay);
         }
     }
