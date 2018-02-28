@@ -12,4 +12,5 @@ typedef TextConfig = {
     ?height:Float,
     ?autoSize:String,
     ?align:String,
+    ?scaleToFit:Bool,
 }
