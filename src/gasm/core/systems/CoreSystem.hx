@@ -1,5 +1,6 @@
 package gasm.core.systems;
 
+import gasm.core.enums.ComponentType;
 import gasm.core.ISystem;
 import gasm.core.System;
 import gasm.core.enums.SystemType;
@@ -13,10 +14,10 @@ class CoreSystem extends System implements ISystem {
     public function new() {
         super();
         type = SystemType.CORE;
-        componentFlags.set(GraphicsModel);
-        componentFlags.set(TextModel);
-        componentFlags.set(ActiveModel);
-        componentFlags.set(SoundModel);
+        componentFlags.set(ComponentType.GraphicsModel);
+        componentFlags.set(ComponentType.TextModel);
+        componentFlags.set(ComponentType.ActiveModel);
+        componentFlags.set(ComponentType.SoundModel);
     }
 
     inline public function update(comp:Component, delta:Float) {

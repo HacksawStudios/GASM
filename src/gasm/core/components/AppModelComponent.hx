@@ -13,6 +13,8 @@ class AppModelComponent extends Component {
     public var orientation:Orientation;
     public var stageSize:Point = {x:0, y:0};
     public var resizeSignal:Signal1<TResize>;
+    public var stageMouseX:Float;
+    public var stageMouseY:Float;
 
     public function new() {
         componentType = ComponentType.Model;

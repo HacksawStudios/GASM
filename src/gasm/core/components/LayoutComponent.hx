@@ -114,12 +114,12 @@ class LayoutComponent extends Component {
 
 
     override public function dispose():Void {
-        super.dispose();
         freeze = true;
-        spriteModel = null;
+        spriteModel.dispose();
         _children = null;
         constraints = null;
         parent = null;
+        super.dispose();
     }
 
     /**
@@ -134,18 +134,17 @@ class LayoutComponent extends Component {
 
     function addChild(child:LayoutComponent) {
         _children.push(child);
+        freeze = false;
         layout();
     }
 
     function scale() {
         if (spriteModel == null) {
-            haxe.Timer.delay(scale, 50);
+            haxe.Timer.delay(layout, 50);
             return;
         }
         var w = layoutBox.scale != null ? spriteModel.origWidth : spriteModel.width;
         var h = layoutBox.scale != null ? spriteModel.origHeight : spriteModel.height;
-        var compartmentWidth:Float;
-        var compartmentHeight:Float;
         var margins = calculateMargins(layoutBox.margins, parent);
         calculatePadding();
 
@@ -159,14 +158,20 @@ class LayoutComponent extends Component {
         var dockedRight = getDocked(Dock.RIGHT);
         var dockedBottom = getDocked(Dock.BOTTOM);
         var undocked = getDocked(Dock.NONE);
-        var allChildren = dockedLeft.concat(dockedRight).concat(dockedTop).concat(dockedBottom).concat(undocked);
-
+        var allChildren:Array<LayoutComponent> = dockedLeft.concat(dockedRight).concat(dockedTop).concat(dockedBottom).concat(undocked);
+        for(comp in allChildren) {
+            if(!comp.inited) {
+                haxe.Timer.delay(scale, 50);
+                return;
+            }
+        }
         if (!(allChildren.length > 0)) {
             return;
         }
         var parentSize = getComponentSize(parent);
         var size = getComponentSize(this);
         var scale = getComponentScale(this);
+
         for (layoutComp in dockedTop) {
             var c = layoutComp.constraints;
             var solver = new Solver();
@@ -267,7 +272,10 @@ class LayoutComponent extends Component {
             return;
         }
         var c = layoutComp.constraints;
-
+        if(layoutComp.layoutBox.dimensions != null) {
+            layoutComp.spriteModel.origWidth = layoutComp.layoutBox.dimensions.x;
+            layoutComp.spriteModel.origHeight = layoutComp.layoutBox.dimensions.y;
+        }
         var childBox = layoutComp.layoutBox;
         var childMargins = layoutComp.computedMargins;
         var xMargins = childMargins.right.value + childMargins.left.value;
@@ -481,7 +489,7 @@ class LayoutComponent extends Component {
 }
 
 /**
-* Layout definition, used to defina layout for a box.
+* Layout definition, used to define layout for a box.
 **/
 typedef LayoutBox = {
 ?margins:Margins,
