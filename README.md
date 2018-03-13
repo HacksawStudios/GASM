@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/lbergman/GASM.svg?branch=develop)](https://travis-ci.org/lbergman/GASM)
-
 # GASM ECS
 
 Framework agnostic ECS layer.
@@ -27,29 +25,35 @@ Some optimization is done to ensure performance seems acceptable, and at least w
 - Extra logic to ensure the different component types are updated in the correct order.
 
 ## Future plans
-Will start using the framework for a game and see how it works out, and will likely make breaking changes to GASM while doing that. I will implement scene/state management and some way of handling dependency injection, but haven't decided if they should be separate libs or included in GASM.
-Eventually when I feel it's stable and ready for a beta release, I will post it to haxelib.
+Current focus is having it stable with HEAPS backend and fixing any issues we might encounter while making our first games using the framework.
+
 
 ## Usage
 Run:
 ```
-haxelib git gasm https://github.com/lbergman/GASM/master
+haxelib install gasm
+```
+Alternatively:
+```
+npm i -D haxe-module-installer gasm
 ```
 Then add the integration for the backend you want to use:
 ```
-haxelib git gasm-openfl https://github.com/lbergman/GASM-openfl/master
+haxelib install gasm-openfl
 ```
 or
 ```
-haxelib git gasm-heaps https://github.com/lbergman/GASM-heaps/master
+haxelib install gasm-heaps
 ```
-Finally you want to look the the examples:
-https://github.com/lbergman/GASM-examples
 
-Or install them with haxelib to try them out:
+Those are also available as npm packages, and assuming you already installed haxe-module-installer you can use:
 ```
-haxelib git gasm-examples https://github.com/lbergman/GASM-examples/master
+npm i -D gasm-heaps
+npm i -D gasm-openfl
 ```
+Finally you might want to look the the examples:
+https://github.com/HacksawStudios/GASM-examples
+
 
 ## Compatibility
 
