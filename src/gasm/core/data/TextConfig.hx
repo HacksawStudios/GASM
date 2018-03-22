@@ -2,7 +2,7 @@ package gasm.core.data;
 
 typedef TextConfig = {
     ?text:String,
-    font:Null<String>,
+    font:Any,
     size:Null<Int>,
     ?color:Null<Int>,
     ?selectable:Bool,
