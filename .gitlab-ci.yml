@@ -8,7 +8,7 @@ test:
   before_script:
     - npm i
   script:
-    - haxelib run travix node
+    - npm test
 
 package_release:
   image: hacksawgaming/hacksaw-build

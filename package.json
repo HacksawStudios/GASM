@@ -9,7 +9,8 @@
   "dependencies": {},
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "preinstall": "haxelib newrepo && haxelib --always install dependencies.hxml",
+    "test": "haxelib run travix node"
   },
   "repository": {
     "type": "git",
