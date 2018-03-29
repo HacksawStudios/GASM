@@ -1,0 +1,25 @@
+{
+  "name": "@hacksawstudios/gasm",
+  "version": "1.0.0",
+  "description": "Entity Component System",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "preinstall": "haxelib newrepo && haxelib --always install tests.hxml && haxelib run travix install",
+    "test": "haxelib run travix node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/hacksawgaming/GASM.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/hacksawgaming/GASM/issues"
+  },
+  "homepage": "https://gitlab.com/hacksawgaming/GASM#README"
+}
