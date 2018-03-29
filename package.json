@@ -7,7 +7,9 @@
     "test": "test"
   },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9"
+  },
   "scripts": {
     "preinstall": "haxelib newrepo && haxelib --always install tests.hxml && haxelib run travix install",
     "test": "haxelib run travix node"
