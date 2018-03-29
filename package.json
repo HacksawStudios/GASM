@@ -9,7 +9,7 @@
   "dependencies": {},
   "devDependencies": {},
   "scripts": {
-    "preinstall": "haxelib newrepo && haxelib --always install dependencies.hxml",
+    "preinstall": "haxelib newrepo && haxelib --always install tests.hxml",
     "test": "haxelib run travix node"
   },
   "repository": {
