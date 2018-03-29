@@ -144,7 +144,7 @@ class Loader {
 						js.Browser.document.getElementsByTagName('head')[0].appendChild(s);
 						// create a div in the page to force font loading
 						var div = js.Browser.document.createDivElement();
-						div.style.fontFamily = name;
+						div.style.fontFamily = fontResourceName;
 						div.style.opacity = 0;
 						div.style.width = "1px";
 						div.style.height = "1px";
