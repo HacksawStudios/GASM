@@ -27,6 +27,7 @@ class Loader {
 
     var _loadedBytes:StringMap<Int>;
     var _totalBytes:Int;
+    var _loadedItems:Int;
 
     /**
 	 * Create asset loader. 
@@ -73,6 +74,7 @@ class Loader {
     }
 
     public function load() {
+        _loadedItems = 0;
         _totalBytes = _loadingQueue.fold(function(curr:QueueItem, last:Int) {
             var size = curr.extra != null ? curr.extra.size + curr.size : curr.size;
             return (size + last);
@@ -129,6 +131,7 @@ class Loader {
 		request.open('GET', item.path, true);
 		request.responseType = js.html.XMLHttpRequestResponseType.ARRAYBUFFER;
 		request.onload = function (event) {
+		    _loadedItems++;
 			if (request.status != 200) {
 				onError(request.statusText);
 				return;
@@ -160,9 +163,14 @@ class Loader {
 			if(handler != null) {
 				handler({id:item.name, data:bytes, path:item.path});
 			}
+			if(_loadedItems == _loadingQueue.length) {
+			    onComplete();
+			}
 		};    
 		request.onprogress = function(event:js.html.ProgressEvent) {
-			handleProgress(Std.int(event.loaded), item.path, Std.int(event.total));
+		    var loaded = event.loaded;
+		    var total = event.total;
+			handleProgress(Std.int(loaded), item.path, Std.int(total));
 		}
 		request.send(null);
 		#else
@@ -249,9 +257,6 @@ class Loader {
         _loadedBytes.set(id, position);
         var loadedTotal = _loadedBytes.fold(function(curr:Int, last:Int) { return (curr + last); }, 0);
         onProgress(Std.int((loadedTotal / _totalBytes) * 100));
-        if (loadedTotal == _totalBytes) {
-            haxe.Timer.delay(onComplete, 100);
-        }
     }
 
     function getPreferedExtension(type:AssetType) {
