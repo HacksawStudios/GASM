@@ -48,6 +48,7 @@ class TweenComponent extends Component {
                 }
             });
             tween.onUpdate(function() {
+                _spriteModel.dirty = true;
                 if (_updateFunc != null) {
                     _updateFunc();
                 }

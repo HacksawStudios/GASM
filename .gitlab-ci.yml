@@ -6,6 +6,7 @@ test:
   image: hacksawgaming/hacksaw-build
   stage: test
   before_script:
+    - apk add --update libc6-compat
     - npm i --unsafe-perm
   script:
     - npm test
@@ -17,6 +18,7 @@ package_release:
     - npm i
   script:
     - $(npm bin)/gitlab-ci-releaser --npm
+    - npm run release
   only:
     - master
 

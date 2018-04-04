@@ -12,8 +12,9 @@
     "@hacksawstudios/haxe-module-installer": "^1.0.5"
   },
   "scripts": {
-    "preinstall": "haxelib newrepo && haxelib --always install tests.hxml && haxelib run travix install",
-    "test": "haxelib run travix node"
+    "preinstall": "npm i -g lix && lix download && haxelib install travix && haxelib run travix install",
+    "test": "haxelib run travix node",
+    "release": "node updateHaxelib.js && zip -r temp.zip src haxelib.json README.md LICENSE && haxelib submit temp.zip && rm temp.zip"
   },
   "repository": {
     "type": "git",
