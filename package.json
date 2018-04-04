@@ -12,7 +12,7 @@
   },
   "scripts": {
     "preinstall": "npm i -g lix && lix download",
-    "test": "haxelib run travix node",
+    "test": "lix run travix node",
     "release": "node updateHaxelib.js && zip -r temp.zip src haxelib.json README.md LICENSE && haxelib submit temp.zip && rm temp.zip"
   },
   "repository": {
