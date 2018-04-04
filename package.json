@@ -8,8 +8,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9",
-    "lix": "^15.1.0-rc.2"
+    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9"
   },
   "scripts": {
     "preinstall": "npm i -g lix && lix download",
