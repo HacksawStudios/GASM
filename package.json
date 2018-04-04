@@ -1,6 +1,6 @@
 {
   "name": "@hacksawstudios/gasm",
-  "version": "1.1.0-rc.1",
+  "version": "1.4.1",
   "description": "Entity Component System",
   "main": "index.js",
   "directories": {
@@ -8,7 +8,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9"
+    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9",
+    "@hacksawstudios/haxe-module-installer": "^1.0.5"
   },
   "scripts": {
     "preinstall": "npm i -g lix && lix download && haxelib install travix && haxelib run travix install",
