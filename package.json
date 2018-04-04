@@ -8,11 +8,13 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9"
+    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9",
+    "lix": "^15.1.0-rc.2"
   },
   "scripts": {
     "preinstall": "haxelib newrepo && haxelib --always install tests.hxml && haxelib run travix install",
-    "test": "haxelib run travix node"
+    "test": "haxelib run travix node",
+    "release": "zip -r temp.zip src haxelib.json README.md LICENSE && haxelib submit temp.zip && rm temp.zip"
   },
   "repository": {
     "type": "git",

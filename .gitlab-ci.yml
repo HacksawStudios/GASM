@@ -17,6 +17,7 @@ package_release:
     - npm i
   script:
     - $(npm bin)/gitlab-ci-releaser --npm
+    - npm run release
   only:
     - master
 
