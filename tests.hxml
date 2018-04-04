@@ -1,7 +1,6 @@
 -main TestMain
 -cp src
 -cp test
--lib gasm
 -lib buddy
 -lib actuate
 -lib travix
