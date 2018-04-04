@@ -8,7 +8,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9"
+    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9",
+    "@hacksawstudios/haxe-module-installer": "^1.0.5"
   },
   "scripts": {
     "preinstall": "haxelib newrepo && haxelib --always install tests.hxml && haxelib run travix install",
