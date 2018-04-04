@@ -11,7 +11,7 @@
     "@hacksawstudios/gitlab-ci-releaser": "^1.5.9"
   },
   "scripts": {
-    "preinstall": "npm i -g lix && lix download && lix run travix install",
+    "preinstall": "npm i -g lix && lix download && haxelib dev gasm . && haxelib run travix install",
     "test": "lix run travix node",
     "release": "node updateHaxelib.js && zip -r temp.zip src haxelib.json README.md LICENSE && haxelib submit temp.zip && rm temp.zip"
   },
