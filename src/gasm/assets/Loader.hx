@@ -11,6 +11,7 @@ using StringTools;
 class Loader {
     var _imageFolder = 'image';
     var _soundFolder = 'sound';
+    var _atlasFolder = 'atlas';
     var _fontFolder = 'font';
     var _localizedFolder = 'localized';
     var _defaultLocale = 'en';
@@ -45,6 +46,7 @@ class Loader {
         _imageFolder = config.imageFolder != null ? config.imageFolder : _imageFolder;
         _soundFolder = config.soundFolder != null ? config.soundFolder : _soundFolder;
         _fontFolder = config.fontFolder != null ? config.fontFolder : _fontFolder;
+        _atlasFolder = config.atlasFolder != null ? config.atlasFolder : _atlasFolder;
         _defaultLocale = config.defaultLocale != null ? config.defaultLocale : _defaultLocale;
         _commonFolder = config.commonFolder != null ? config.commonFolder : _commonFolder;
         _localizedFolder = config.localizedFolder != null ? config.localizedFolder : _localizedFolder;
@@ -93,6 +95,11 @@ class Loader {
 
     public function queueItem(id:String, type:AssetType) {
         var entry = getEntry(id, type);
+        var extraType = switch(type) {
+            case AssetType.BitmapFont: AssetType.BitmapFontImage;
+            case AssetType.Atlas: AssetType.AtlasImage;
+            default: null;
+        }
         _loadingQueue.push({
             type: type,
             name: entry.name,
@@ -100,7 +107,7 @@ class Loader {
             size: entry.size,
             extension: entry.extension,
             extra: entry.extra == null ? null : {
-                type: AssetType.BitmapFontImage,
+                type: extraType,
                 name:entry.extra.name,
                 path:entry.extra.path,
                 size:entry.extra.size,
@@ -183,6 +190,7 @@ class Loader {
             case AssetType.Image: _imageFolder;
             case AssetType.Sound: _soundFolder;
             case AssetType.Font | AssetType.BitmapFont: _fontFolder;
+            case AssetType.Atlas: _atlasFolder;
             default: null;
         }
         var platformFolder:FileEntry = null;
@@ -199,7 +207,6 @@ class Loader {
             if (localized != null) {
                 var localeDir = localized.children.find(function(item) { return item.name == locale && item.type == 'directory'; });
                 if (localeDir == null) {
-                    trace('locale $_locale not found, reverting to en');
                     localeDir = localized.children.find(function(item) { return item.name == _defaultLocale && item.type == 'directory'; });
                     if (localeDir == null) {
                         onError('Locale $_locale configured, but no locale resources found.');
@@ -223,6 +230,13 @@ class Loader {
             switch(type) {
                 case AssetType.BitmapFont:
                     entry = files.find(function(val) { return val.extension == '.xml' || val.extension == '.fnt'; });
+                    entry.extra = files.find(function(val) { return val.extension == '.png'; });
+                    entry.extra.type = 'file';
+                    entry.extra.path = entry.extra.path.replace('\\', '/');
+                    entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
+                    entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
+                case AssetType.Atlas:
+                    entry = files.find(function(val) { return val.extension == '.atlas'; });
                     entry.extra = files.find(function(val) { return val.extension == '.png'; });
                     entry.extra.type = 'file';
                     entry.extra.path = entry.extra.path.replace('\\', '/');
@@ -290,6 +304,8 @@ enum AssetType {
     BitmapFont;
     BitmapFontImage;
     Json;
+    Atlas;
+    AtlasImage;
 }
 
 typedef HandlerItem = {
@@ -327,6 +343,10 @@ typedef AssetConfig = {
  * Name of folders containing fonts, defaults to 'font'
  */
 ?fontFolder:String,
+/**
+ * Name of folders containing atlases, defaults to 'atlas'
+ */
+?atlasFolder:String,
 /**
  * If locale has been set, this is the name of locale sub folder in which to look for localized assets. Defaults to 'localized'
  */
