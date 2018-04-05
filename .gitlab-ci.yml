@@ -1,0 +1,32 @@
+stages:
+  - test
+  - release
+
+test:
+  image: hacksawgaming/hacksaw-build
+  stage: test
+  before_script:
+    - npm i --unsafe-perm
+  script:
+    - npm test
+
+package_release:
+  image: hacksawgaming/hacksaw-build
+  stage: release
+  before_script:
+    - npm i
+  script:
+    - $(npm bin)/gitlab-ci-releaser --npm
+    - npm run release
+  only:
+    - master
+
+package_rc:
+  image: hacksawgaming/hacksaw-build
+  stage: release
+  before_script:
+    - npm i
+  script:
+    - $(npm bin)/gitlab-ci-releaser --npm --preid rc
+  only:
+    - develop

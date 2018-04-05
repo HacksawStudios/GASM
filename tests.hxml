@@ -3,5 +3,6 @@
 -cp test
 -lib buddy
 -lib actuate
+-lib travix
 -D travis
 -D buddy-colors
