@@ -9,7 +9,8 @@
   "dependencies": {},
   "devDependencies": {
     "@hacksawstudios/gitlab-ci-releaser": "^1.5.9",
-    "@hacksawstudios/haxe-module-installer": "^1.0.5"
+    "@hacksawstudios/haxe-module-installer": "^1.0.5",
+    "fs-extra": "^5.0.0"
   },
   "scripts": {
     "postinstall": "node_modules/.bin/haxe-module-installer",
