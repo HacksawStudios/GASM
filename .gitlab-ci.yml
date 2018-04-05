@@ -6,7 +6,6 @@ test:
   image: hacksawgaming/hacksaw-build
   stage: test
   before_script:
-    - apk add --update libc6-compat
     - npm i --unsafe-perm
   script:
     - npm test
