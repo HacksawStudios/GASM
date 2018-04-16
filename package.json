@@ -1,6 +1,6 @@
 {
   "name": "@hacksawstudios/gasm",
-  "version": "1.5.1",
+  "version": "1.6.0-rc.1",
   "description": "Entity Component System",
   "main": "index.js",
   "directories": {
@@ -15,8 +15,7 @@
   "scripts": {
     "postinstall": "node_modules/.bin/haxe-module-installer",
     "pretest": "haxelib newrepo && haxelib --always install tests.hxml && haxelib run travix install",
-    "test": "haxelib run travix node",
-    "release": "node updateHaxelib.js && zip -r temp.zip src haxelib.json README.md LICENSE && haxelib submit temp.zip && rm temp.zip"
+    "test": "haxelib run travix node"
   },
   "repository": {
     "type": "git",
