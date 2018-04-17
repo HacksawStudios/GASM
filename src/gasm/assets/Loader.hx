@@ -13,6 +13,7 @@ class Loader {
     var _soundFolder = 'sound';
     var _atlasFolder = 'atlas';
     var _fontFolder = 'font';
+    var _configFolder = 'config';
     var _localizedFolder = 'localized';
     var _defaultLocale = 'en';
     var _commonFolder = 'common';
@@ -47,6 +48,7 @@ class Loader {
         _soundFolder = config.soundFolder != null ? config.soundFolder : _soundFolder;
         _fontFolder = config.fontFolder != null ? config.fontFolder : _fontFolder;
         _atlasFolder = config.atlasFolder != null ? config.atlasFolder : _atlasFolder;
+        _configFolder = config.configFolder != null ? config.configFolder : _configFolder;
         _defaultLocale = config.defaultLocale != null ? config.defaultLocale : _defaultLocale;
         _commonFolder = config.commonFolder != null ? config.commonFolder : _commonFolder;
         _localizedFolder = config.localizedFolder != null ? config.localizedFolder : _localizedFolder;
@@ -191,6 +193,7 @@ class Loader {
             case AssetType.Sound: _soundFolder;
             case AssetType.Font | AssetType.BitmapFont: _fontFolder;
             case AssetType.Atlas: _atlasFolder;
+            case AssetType.Config: _configFolder;
             default: null;
         }
         var platformFolder:FileEntry = null;
@@ -303,7 +306,7 @@ enum AssetType {
     Font;
     BitmapFont;
     BitmapFontImage;
-    Json;
+    Config;
     Atlas;
     AtlasImage;
 }
@@ -328,25 +331,29 @@ typedef AssetConfig = {
  */
 ?locale:String,
 /**
- * Array with FormatTypes to define what extension to use if multiple files with same name is found. For example [{type:FormatTypes.Sound, '.mp3'}] will ensure you only load mp3 audio
+ * Array with FormatTypes to define what extension to use if multiple files with same name is found. For example [{type:AssetType.Sound, extension:'.mp3'}] will ensure you only load mp3 audio
  */
 ?formats:Array<FormatType>,
 /**
- * Name of folders containing images, defaults to 'image'
+ * Name of folder containing images, defaults to 'image'
  */
 ?imageFolder:String,
 /**
- * Name of folders containing sounds, defaults to 'sound'
+ * Name of folder containing sounds, defaults to 'sound'
  */
 ?soundFolder:String,
 /**
- * Name of folders containing fonts, defaults to 'font'
+ * Name of folder containing fonts, defaults to 'font'
  */
 ?fontFolder:String,
 /**
- * Name of folders containing atlases, defaults to 'atlas'
+ * Name of folder containing atlases, defaults to 'atlas'
  */
 ?atlasFolder:String,
+/**
+ * Name of folder containing json config files, defaults to 'config'
+ */
+?configFolder:String,
 /**
  * If locale has been set, this is the name of locale sub folder in which to look for localized assets. Defaults to 'localized'
  */
