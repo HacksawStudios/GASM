@@ -29,6 +29,7 @@ class Loader {
 
     var _loadedBytes:StringMap<Int>;
     var _totalBytes:Int;
+    var _totalItems = 0;
     var _loadedItems:Int;
 
     /**
@@ -102,6 +103,10 @@ class Loader {
             case AssetType.Atlas: AssetType.AtlasImage;
             default: null;
         }
+        _totalItems++;
+        if(entry.extra != null) {
+            _totalItems++;
+        }
         _loadingQueue.push({
             type: type,
             name: entry.name,
@@ -172,7 +177,7 @@ class Loader {
 			if(handler != null) {
 				handler({id:item.name, data:bytes, path:item.path});
 			}
-			if(_loadedItems == _loadingQueue.length) {
+			if(_loadedItems == _totalItems) {
 			    onComplete();
 			}
 		};    
