@@ -143,9 +143,9 @@ class LayoutComponent extends Component {
             haxe.Timer.delay(layout, 50);
             return;
         }
-        var w = layoutBox.scale != null ? spriteModel.origWidth : spriteModel.width;
-        var h = layoutBox.scale != null ? spriteModel.origHeight : spriteModel.height;
-        var margins = calculateMargins(layoutBox.margins, parent);
+        layoutBox.scale != null ? spriteModel.origWidth : spriteModel.width;
+        layoutBox.scale != null ? spriteModel.origHeight : spriteModel.height;
+        calculateMargins(layoutBox.margins, parent);
         calculatePadding();
 
         var ypos = 0.0;
@@ -332,7 +332,6 @@ class LayoutComponent extends Component {
         var xScale:Float = 1.0;
         var yScale:Float = 1.0;
         if (childBox.scale == ScaleType.PROPORTIONAL) {
-            var parent:LayoutComponent = layoutComp.owner.getFromParents(LayoutComponent);
             var origW = layoutComp.spriteModel.origWidth > 0 ? layoutComp.spriteModel.origWidth : size.x;
             var origH = layoutComp.spriteModel.origHeight > 0 ? layoutComp.spriteModel.origHeight : size.y;
             var ratio = Math.min((containerW - xMargins) / origW, (containerH - yMargins) / origH);
