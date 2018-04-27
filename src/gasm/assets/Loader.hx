@@ -31,6 +31,7 @@ class Loader {
     var _totalBytes:Int;
     var _totalItems = 0;
     var _loadedItems:Int;
+    var _itemIndex = 0;
 
     /**
 	 * Create asset loader. 
@@ -84,12 +85,7 @@ class Loader {
             var size = curr.extra != null ? curr.extra.size + curr.size : curr.size;
             return (size + last);
         }, 0);
-        for (item in _loadingQueue) {
-            loadItem(item, _extensionHandlers.get(item.type.getIndex()));
-            if (item.extra != null) {
-                loadItem(item.extra, _extensionHandlers.get(item.extra.type.getIndex()));
-            }
-        }
+        loadNext();
     }
 
     public function addHandler(type:AssetType, handler:HandlerItem -> Void) {
@@ -137,6 +133,20 @@ class Loader {
 
     dynamic public function onError(error:String) {
 
+    }
+
+    function loadNext() {
+        if(_itemIndex < _loadingQueue.length) {
+            var item = _loadingQueue[_itemIndex];
+            loadItem(item, _extensionHandlers.get(item.type.getIndex()));
+            if (item.extra != null) {
+                loadItem(item.extra, _extensionHandlers.get(item.extra.type.getIndex()));
+            }
+            haxe.Timer.delay(function() {
+                _itemIndex++;
+                loadNext();
+            }, 0);
+        }
     }
 
     function loadItem(item:QueueItem, ?handler:HandlerItem -> Void) {
