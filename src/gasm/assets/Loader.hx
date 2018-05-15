@@ -29,7 +29,9 @@ class Loader {
 
     var _loadedBytes:StringMap<Int>;
     var _totalBytes:Int;
+    var _totalItems = 0;
     var _loadedItems:Int;
+    var _itemIndex = 0;
 
     /**
 	 * Create asset loader. 
@@ -83,12 +85,7 @@ class Loader {
             var size = curr.extra != null ? curr.extra.size + curr.size : curr.size;
             return (size + last);
         }, 0);
-        for (item in _loadingQueue) {
-            loadItem(item, _extensionHandlers.get(item.type.getIndex()));
-            if (item.extra != null) {
-                loadItem(item.extra, _extensionHandlers.get(item.extra.type.getIndex()));
-            }
-        }
+        loadNext();
     }
 
     public function addHandler(type:AssetType, handler:HandlerItem -> Void) {
@@ -101,6 +98,10 @@ class Loader {
             case AssetType.BitmapFont: AssetType.BitmapFontImage;
             case AssetType.Atlas: AssetType.AtlasImage;
             default: null;
+        }
+        _totalItems++;
+        if(entry.extra != null) {
+            _totalItems++;
         }
         _loadingQueue.push({
             type: type,
@@ -132,6 +133,20 @@ class Loader {
 
     dynamic public function onError(error:String) {
 
+    }
+
+    function loadNext() {
+        if(_itemIndex < _loadingQueue.length) {
+            var item = _loadingQueue[_itemIndex];
+            loadItem(item, _extensionHandlers.get(item.type.getIndex()));
+            if (item.extra != null) {
+                loadItem(item.extra, _extensionHandlers.get(item.extra.type.getIndex()));
+            }
+            haxe.Timer.delay(function() {
+                _itemIndex++;
+                loadNext();
+            }, 0);
+        }
     }
 
     function loadItem(item:QueueItem, ?handler:HandlerItem -> Void) {
@@ -172,7 +187,7 @@ class Loader {
 			if(handler != null) {
 				handler({id:item.name, data:bytes, path:item.path});
 			}
-			if(_loadedItems == _loadingQueue.length) {
+			if(_loadedItems == _totalItems) {
 			    onComplete();
 			}
 		};    
@@ -211,12 +226,10 @@ class Loader {
                 var localeDir = localized.children.find(function(item) { return item.name == locale && item.type == 'directory'; });
                 if (localeDir == null) {
                     localeDir = localized.children.find(function(item) { return item.name == _defaultLocale && item.type == 'directory'; });
-                    if (localeDir == null) {
-                        onError('Locale $_locale configured, but no locale resources found.');
-                        return null;
-                    }
                 }
-                matches = findFilesByName(localeDir, name);
+                if (localeDir != null) {
+                    matches = findFilesByName(localeDir, name);
+                }
             }
             if (matches == null || matches.length < 1) {
                 matches = findFilesByName(folder, name);
@@ -225,36 +238,38 @@ class Loader {
         }
         var files = getFilesFromFolder(platformFolder, _locale);
         if(files == null || !(files.length > 0)) {
-            files = getFilesFromFolder(commonFolder, name);
+            files = getFilesFromFolder(commonFolder, _locale);
         }
 
-        var entry:FileEntry;
-        if (files.length > 1) {
-            switch(type) {
-                case AssetType.BitmapFont:
-                    entry = files.find(function(val) { return val.extension == '.xml' || val.extension == '.fnt'; });
-                    entry.extra = files.find(function(val) { return val.extension == '.png'; });
-                    entry.extra.type = 'file';
-                    entry.extra.path = entry.extra.path.replace('\\', '/');
-                    entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
-                    entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
-                case AssetType.Atlas:
-                    entry = files.find(function(val) { return val.extension == '.atlas'; });
-                    entry.extra = files.find(function(val) { return val.extension == '.png'; });
-                    entry.extra.type = 'file';
-                    entry.extra.path = entry.extra.path.replace('\\', '/');
-                    entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
-                    entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
-                default:
-                    var preferedExtension = getPreferedExtension(type);
-                    if (preferedExtension == null) {
-                        trace('Multiple files with same name found, but no prefered extension configured.');
-                        trace('When constructing Loader add format param defining if you prefer to use ' + [for (match in files) match.extension].join(' or ') + ' for type ' + type.getName);
-                    }
-                    entry = files.find(function(val) { return val.extension == preferedExtension; });
+        var entry:FileEntry = null;
+        if (files != null) {
+            if (files.length > 1) {
+                switch(type) {
+                    case AssetType.BitmapFont:
+                        entry = files.find(function(val) { return val.extension == '.xml' || val.extension == '.fnt'; });
+                        entry.extra = files.find(function(val) { return val.extension == '.png'; });
+                        entry.extra.type = 'file';
+                        entry.extra.path = entry.extra.path.replace('\\', '/');
+                        entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
+                        entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
+                    case AssetType.Atlas:
+                        entry = files.find(function(val) { return val.extension == '.atlas'; });
+                        entry.extra = files.find(function(val) { return val.extension == '.png'; });
+                        entry.extra.type = 'file';
+                        entry.extra.path = entry.extra.path.replace('\\', '/');
+                        entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
+                        entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
+                    default:
+                        var preferedExtension = getPreferedExtension(type);
+                        if (preferedExtension == null) {
+                            trace('Multiple files with same name found, but no prefered extension configured.');
+                            trace('When constructing Loader add format param defining if you prefer to use ' + [for (match in files) match.extension].join(' or ') + ' for type ' + type.getName);
+                        }
+                        entry = files.find(function(val) { return val.extension == preferedExtension; });
+                }
+            } else {
+                entry = files[0];
             }
-        } else {
-            entry = files[0];
         }
         if (entry == null) {
             onError('Unable to load \'$type\' \'$name\'');
