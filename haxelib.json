@@ -16,6 +16,6 @@
 	"url": "https://github.com/lbergman/gasm",
 	 "dependencies": {
 		 "buddy": "",
-		 "actuate": ""
+		 "tweenx": ""
 	  }
 }
