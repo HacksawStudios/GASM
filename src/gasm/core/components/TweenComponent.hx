@@ -1,5 +1,6 @@
 package gasm.core.components;
 
+import tweenxcore.Tools.Easing;
 import tweenx909.TweenX;
 import gasm.core.components.SpriteModelComponent;
 import gasm.core.enums.ComponentType;
@@ -10,13 +11,15 @@ class TweenComponent extends Component {
     var _startProperties:Dynamic;
     var _duration:Float;
     var _spriteModel:SpriteModelComponent;
+    var _easing:Float -> Float;
     var _completeFunc:Void -> Void;
 
-    public function new(properties:Dynamic, duration:Float, startProperties:Dynamic = null) {
+    public function new(properties:Dynamic, duration:Float, startProperties:Dynamic = null, easing:Float -> Float = null) {
         componentType = ComponentType.Actor;
         _properties = properties;
         _startProperties = startProperties;
         _duration = duration;
+        _easing = easing == null ? Easing.linear : easing;
     }
 
     override public function init() {
@@ -35,7 +38,7 @@ class TweenComponent extends Component {
 
     inline function tween() {
         if (_spriteModel != null) {
-            TweenX.to(_spriteModel, _properties, _duration).onFinish(function() {
+            TweenX.to(_spriteModel, _properties, _duration, _easing).onFinish(function() {
                 if (_completeFunc != null) {
                     _completeFunc();
                 }
