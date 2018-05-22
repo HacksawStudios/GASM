@@ -1,7 +1,7 @@
 package gasm.core.components;
 
-import motion.actuators.GenericActuator;
-import motion.Actuate;
+import tweenxcore.Tools.Easing;
+import tweenx909.TweenX;
 import gasm.core.components.SpriteModelComponent;
 import gasm.core.enums.ComponentType;
 import gasm.core.Component;
@@ -11,14 +11,15 @@ class TweenComponent extends Component {
     var _startProperties:Dynamic;
     var _duration:Float;
     var _spriteModel:SpriteModelComponent;
+    var _easing:Float -> Float;
     var _completeFunc:Void -> Void;
-    var _updateFunc:Void -> Void;
 
-    public function new(properties:Dynamic, duration:Float, startProperties:Dynamic = null) {
+    public function new(properties:Dynamic, duration:Float, startProperties:Dynamic = null, easing:Float -> Float = null) {
         componentType = ComponentType.Actor;
         _properties = properties;
         _startProperties = startProperties;
         _duration = duration;
+        _easing = easing == null ? Easing.linear : easing;
     }
 
     override public function init() {
@@ -35,22 +36,11 @@ class TweenComponent extends Component {
         _completeFunc = func;
     }
 
-    public function onUpdate(func:Void -> Void) {
-        _updateFunc = func;
-    }
-
     inline function tween() {
         if (_spriteModel != null) {
-            var tween:GenericActuator<SpriteModelComponent> = Actuate.tween(_spriteModel, _duration, _properties);
-            tween.onComplete(function() {
+            TweenX.to(_spriteModel, _properties, _duration, _easing).onFinish(function() {
                 if (_completeFunc != null) {
                     _completeFunc();
-                }
-            });
-            tween.onUpdate(function() {
-                _spriteModel.dirty = true;
-                if (_updateFunc != null) {
-                    _updateFunc();
                 }
             });
         } else {
