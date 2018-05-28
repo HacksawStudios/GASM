@@ -158,6 +158,26 @@ class EntityComponentTest extends BuddySuite {
                 comp2.owner.getFromParents(TestComponentA).should.be(comp1);
             });
 
+            it("should get component from parent when other components with same base", {
+                var base = new Entity();
+                var child = new Entity();
+                var comp1 = new TestComponentExtendsMockA(); // ResultGrid
+                var comp2 = new TestComponentExtendsMockB(); // Scratch
+                base.addChild(child);
+                child.add(comp1);
+                child.add(comp2);
+
+                /*
+                holder -> scratchArea -> scratch
+                                      -> resultGrid
+                
+                
+                base -> child -> comp1
+                     -> comp2
+                */
+                comp2.owner.get(TestComponentExtendsMockA).should.be(comp1);
+            });
+
             it("should get component from root", {
                 var root = new Entity();
                 var base = new Entity();

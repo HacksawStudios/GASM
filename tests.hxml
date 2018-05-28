@@ -3,6 +3,6 @@
 -cp test
 -lib buddy
 -lib tweenx
--lib travix:0.10.5
+-lib travix
 -D travis
 -D buddy-colors
