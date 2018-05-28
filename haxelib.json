@@ -11,9 +11,9 @@
 	"contributors": [
 		"leo.bergman"
 	],
-	"releasenote": "See https://github.com/lbergman/gasm/blob/master/doc/changes.md",
+	"releasenote": "See https://github.com/HacksawStudios/gasm/blob/master/doc/changes.md",
 	"version": "1.5.1",
-	"url": "https://github.com/lbergman/gasm",
+	"url": "https://github.com/HacksawStudios/gasm",
 	 "dependencies": {
 		 "buddy": "",
 		 "tweenx": ""
