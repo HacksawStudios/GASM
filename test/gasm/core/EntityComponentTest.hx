@@ -62,7 +62,7 @@ class EntityComponentTest extends BuddySuite {
             });
 
             /**
-			 * If we add two components, we should be able to get component B in component A 
+			 * If we add two components, we should be able to get component B in component A
 			 */
             it("should be able to get sibling component from owner by class", {
                 var base = new Entity();

@@ -9,8 +9,6 @@
 
 package jasper;
 
-import jasper.ds.FloatMap;
-
 class _Constraint_ 
 {
     public var m_expression (default, null):Expression;
@@ -62,13 +60,16 @@ class _Constraint_
      */
     private static function reduce(expr :Expression) :Expression
     {
-        var vars = new FloatMap();
+        var vars = new Map<Variable, Float>();
 
         for(term in expr.m_terms) {
+            if(!vars.exists(term.m_variable)) {
+                vars[term.m_variable] = 0;
+            }
             vars[term.m_variable] += term.m_coefficient;
         }
 
-        var terms = [for (key in vars.keys()) new Term(key, vars.get(key))];
+        var terms = [for (key in vars.keys()) new Term(key, vars.exists(key) ? vars.get(key) : 0)];
 
         return new Expression(terms, expr.m_constant);
     }

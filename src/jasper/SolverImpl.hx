@@ -16,7 +16,6 @@ import jasper.Errors.DuplicateEditVariable;
 import jasper.Errors.BadRequiredStrength;
 import jasper.Errors.UnknownEditVariable;
 import jasper.Errors.InternalSolverError;
-import jasper.ds.SolverMap;
 
 import jasper.Symbol;
 import jasper.Constraint;
@@ -40,13 +39,13 @@ typedef EditInfo =
     @:optional var constant :Float;
 };
 
-typedef VarMap = SolverMap<Variable, Symbol>;
+typedef VarMap = Map<Variable, Symbol>;
 
-typedef RowMap = SolverMap<Symbol, Row>;
+typedef RowMap = Map<Symbol, Row>;
 
-typedef CnMap = SolverMap<Constraint, Tag>;
+typedef CnMap = Map<Constraint, Tag>;
 
-typedef EditMap = SolverMap<Variable, EditInfo>;
+typedef EditMap = Map<Variable, EditInfo>;
 
 class SolverImpl
 {
@@ -284,13 +283,13 @@ class SolverImpl
         }
 
         // Otherwise update each row where the error variables exist.
-        for( row_it in m_rows.keyValIterator() )
+        for( row_it in m_rows.keys() )
         {
-            var coeff = row_it.second.coefficientFor( info.tag.marker );
+            var coeff = m_rows[row_it].coefficientFor( info.tag.marker );
             if( coeff != 0.0 &&
-                row_it.second.add( delta * coeff ) < 0.0 &&
-                row_it.first.m_type != EXTERNAL )
-                m_infeasible_rows.push( row_it.first );
+                m_rows[row_it].add( delta * coeff ) < 0.0 &&
+                row_it.m_type != EXTERNAL )
+                m_infeasible_rows.push( row_it );
         }
 
         dualOptimize();
@@ -301,13 +300,14 @@ class SolverImpl
      */
     public function updateVariables()
     {
-        for( var_it in m_vars.keyValIterator())
+        for( var_it in m_vars.keys())
         {
-            var var_ :Variable = var_it.first;
-            if( !m_rows.exists( var_it.second ) )
+            var val = m_vars[var_it];
+            var var_ :Variable = var_it;
+            if( !m_rows.exists( val ) )
                 var_.m_value = 0.0;
             else
-                var_.m_value = m_rows.get( var_it.second ).m_constant;
+                var_.m_value = m_rows.get( val ).m_constant;
         }
     }
 
@@ -460,10 +460,10 @@ class SolverImpl
      */
     private function chooseSubject( row :Row, tag :Tag ) : Symbol
     {
-        for( it in row.m_cells.keyValIterator() )
+        for( it in row.m_cells.keys() )
         {
-            if( it.first.m_type == EXTERNAL )
-                return it.first;
+            if( it.m_type == EXTERNAL )
+                return it;
         }
         if( tag.marker.m_type == SLACK || tag.marker.m_type == ERROR )
         {
@@ -504,7 +504,7 @@ class SolverImpl
         {
             var rowptr :Row = m_rows.get( art );
             m_rows.remove( art );
-            if( rowptr.m_cells.empty() )
+            if( Lambda.empty(rowptr.m_cells) )
                 return success;
             var entering :Symbol = anyPivotableSymbol( rowptr );
             if( entering.m_type == INVALID )
@@ -515,8 +515,8 @@ class SolverImpl
         }
 
         // Remove the artificial variable from the tableau.
-        for( it in m_rows.keyValIterator() )
-            it.second.remove( art );
+        for( it in m_rows.keys() )
+            m_rows[it].remove( art );
         m_objective.remove( art );
         return success;
     }
@@ -531,12 +531,13 @@ class SolverImpl
      */
     private function substitute( symbol :Symbol, row :Row )
     {
-        for( it in m_rows.keyValIterator() )
+        for( it in m_rows.keys() )
         {
-            it.second.substitute( symbol, row );
-            if( it.first.m_type != EXTERNAL &&
-                it.second.m_constant < 0.0 )
-                m_infeasible_rows.push( it.first );
+            var val = m_rows[it];
+            val.substitute( symbol, row );
+            if( it.m_type != EXTERNAL &&
+                val.m_constant < 0.0 )
+                m_infeasible_rows.push( it );
         }
         m_objective.substitute( symbol, row );
         if( m_artificial != null )
@@ -617,10 +618,13 @@ class SolverImpl
      */
     private function getEnteringSymbol( objective :Row ) : Symbol
     {
-        for( it in objective.m_cells.keyValIterator() )
+        for( it in objective.m_cells.keys() )
         {
-            if( it.first.m_type != DUMMY && it.second < 0.0 ) {
-                return it.first;
+            if(!objective.m_cells.exists(it)) {
+                objective.m_cells[it] = 0;
+            }
+            if( it.m_type != DUMMY && objective.m_cells[it] < 0.0 ) {
+                return it;
             }
         }
         return new Symbol();
@@ -641,16 +645,17 @@ class SolverImpl
     {
         var entering :Symbol = null;
         var ratio = Util.FLOAT_MAX;
-        for( it in row.m_cells.keyValIterator() )
+        for( it in row.m_cells.keys() )
         {
-            if( it.second > 0.0 && it.first.m_type != DUMMY )
+            var val = row.m_cells[it];
+            if( val > 0.0 && it.m_type != DUMMY )
             {
-                var coeff = m_objective.coefficientFor( it.first );
-                var r = coeff / it.second;
+                var coeff = m_objective.coefficientFor( it );
+                var r = coeff / val;
                 if( r < ratio )
                 {
                     ratio = r;
-                    entering = it.first;
+                    entering = it;
                 }
             }
         }
@@ -666,10 +671,10 @@ class SolverImpl
      */
     private function anyPivotableSymbol( row :Row ) : Symbol
     {
-        for( it in row.m_cells.keyValIterator() )
+        for( it in row.m_cells.keys() )
         {
-            if( it.first.m_type == SLACK || it.first.m_type == ERROR)
-                return it.first;
+            if( it.m_type == SLACK || it.m_type == ERROR)
+                return it;
         }
         return new Symbol();
     }
@@ -688,18 +693,19 @@ class SolverImpl
     {
         var ratio = Util.FLOAT_MAX;
         var found :{first:Symbol,second:Row} = null;
-        for( it in m_rows.keyValIterator() )
+        for( it in m_rows.keys() )
         {
-            if( it.first.m_type != EXTERNAL )
+            if( it.m_type != EXTERNAL )
             {
-                var temp = it.second.coefficientFor( entering );
+                var val = m_rows[it];
+                var temp = val.coefficientFor( entering );
                 if( temp < 0.0 )
                 {
-                    var temp_ratio = -it.second.m_constant / temp;
+                    var temp_ratio = -val.m_constant / temp;
                     if( temp_ratio < ratio )
                     {
                         ratio = temp_ratio;
-                        found = it;
+                        found = {first:it, second:val};
                         break;
                     }
                 }
@@ -736,31 +742,32 @@ class SolverImpl
         var first = end;
         var second = end;
         var third = end;
-        for( it in m_rows.keyValIterator() )
+        for( it in m_rows.keys() )
         {
-            var c = it.second.coefficientFor( marker );
+            var val = m_rows[it];
+            var c = val.coefficientFor( marker );
             if( c == 0.0 )
                 continue;
-            if( it.first.m_type == EXTERNAL )
+            if( it.m_type == EXTERNAL )
             {
-                third = it;
+                third = {first:it, second:val};
             }
             else if( c < 0.0 )
             {
-                var r = -it.second.m_constant / c;
+                var r = -val.m_constant / c;
                 if( r < r1 )
                 {
                     r1 = r;
-                    first = it;
+                    first = {first:it, second:val};
                 }
             }
             else
             {
-                var r = it.second.m_constant / c;
+                var r = val.m_constant / c;
                 if( r < r2 )
                 {
                     r2 = r;
-                    second = it;
+                    second = {first:it, second:val};
                 }
             }
         }
@@ -807,9 +814,9 @@ class SolverImpl
      */
     private function allDummies( row :Row ) : Bool
     {
-        for( it in row.m_cells.keyValIterator() )
+        for( it in row.m_cells.keys() )
         {
-            if( it.first.m_type != DUMMY )
+            if( it.m_type != DUMMY )
                 return false;
         }
         return true;

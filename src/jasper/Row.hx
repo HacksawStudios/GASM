@@ -9,12 +9,11 @@
 
 package jasper;
 
-import jasper.ds.FloatMap;
 
 class Row 
 {
     public var m_constant (default, null):Float;
-    public var m_cells (default, null) = new FloatMap();
+    public var m_cells (default, null) = new Map<Symbol, Float>();
 
     public function new(constant :Float = 0) : Void
     {
@@ -24,8 +23,8 @@ class Row
     public static inline function fromRow(other :Row) : Row
     {
         var row = new Row(other.m_constant);
-        for(it in other.m_cells.keyValIterator()) {
-            row.m_cells[it.first] = it.second;
+        for(it in other.m_cells.keys()) {
+            row.m_cells[it] = other.m_cells[it];
         }
         return row;
     }
@@ -47,6 +46,9 @@ class Row
      */
     public function insertSymbol( symbol :Symbol, coefficient :Float = 1.0 ) : Void
     {
+        if(!m_cells.exists(symbol)) {
+            m_cells[symbol] = 0;
+        }
         if( Util.nearZero( m_cells[ symbol ] += coefficient ) )
             m_cells.remove( symbol );
     }
@@ -60,10 +62,13 @@ class Row
     public function insertRow( other :Row, coefficient :Float = 1.0 ) : Void
     {
         m_constant += other.m_constant * coefficient;
-        for(it in other.m_cells.keyValIterator()) {
-            var coeff = it.second * coefficient;
-            if( Util.nearZero( m_cells[ it.first ] += coeff ) )
-                m_cells.remove( it.first );
+        for(it in other.m_cells.keys()) {
+            if(!m_cells.exists(it)) {
+                m_cells[it] = 0;
+            }
+            var coeff = other.m_cells[it] * coefficient;
+            if( Util.nearZero( m_cells[ it ] += coeff ) )
+                m_cells.remove( it );
         }
     }
 
@@ -81,8 +86,8 @@ class Row
     public function reverseSign() : Void
     {
         m_constant = -m_constant;
-        for( it in m_cells.keyValIterator() ) {
-            m_cells[it.first] = -it.second;
+        for( it in m_cells.keys() ) {
+            m_cells[it] = -m_cells[it];
         }
     }
 
@@ -100,8 +105,9 @@ class Row
         var coeff = -1.0 / m_cells[ symbol ];
         m_cells.remove( symbol );
         m_constant *= coeff;
-        for( it in m_cells.keyValIterator())
-            m_cells[it.first] *= coeff;
+        for( it in m_cells.keys()) {
+            m_cells[it] *= coeff;
+        }
     }
 
     /**
@@ -125,7 +131,7 @@ class Row
      */
     public function coefficientFor( symbol :Symbol ) : Float
     {
-        return m_cells[symbol];
+        return m_cells.exists(symbol) ? m_cells[symbol] : 0;
     }
 
     /**
