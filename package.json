@@ -20,12 +20,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/hacksawgaming/GASM.git"
+    "url": "git+ssh://git@gitlab.hacksawstudios.com/hacksawgaming/GASM.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/hacksawgaming/GASM/issues"
+    "url": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM/issues"
   },
-  "homepage": "https://gitlab.com/hacksawgaming/GASM#README"
+  "homepage": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM#README"
 }
