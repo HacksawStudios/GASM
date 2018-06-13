@@ -8,7 +8,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9",
+    "@hacksawstudios/deployer": "^1.1.4",
+    "@hacksawstudios/gitlab-ci-releaser": "^2.0.0",
     "@hacksawstudios/haxe-module-installer": "^1.0.5",
     "fs-extra": "^6.0.1"
   },
