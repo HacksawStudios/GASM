@@ -1,6 +1,6 @@
 {
   "name": "@hacksawstudios/gasm",
-  "version": "1.11.1",
+  "version": "1.11.2-rc.1",
   "description": "Entity Component System",
   "main": "index.js",
   "directories": {
@@ -8,7 +8,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@hacksawstudios/gitlab-ci-releaser": "^1.5.9",
+    "@hacksawstudios/deployer": "^1.1.4",
+    "@hacksawstudios/gitlab-ci-releaser": "^2.0.0",
     "@hacksawstudios/haxe-module-installer": "^1.0.5",
     "fs-extra": "^6.0.1"
   },
@@ -19,12 +20,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/hacksawgaming/GASM.git"
+    "url": "git+ssh://git@gitlab.hacksawstudios.com/hacksawgaming/GASM.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/hacksawgaming/GASM/issues"
+    "url": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM/issues"
   },
-  "homepage": "https://gitlab.com/hacksawgaming/GASM#README"
+  "homepage": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM#README"
 }
