@@ -94,29 +94,31 @@ class Loader {
 
     public function queueItem(id:String, type:AssetType) {
         var entry = getEntry(id, type);
-        var extraType = switch(type) {
-            case AssetType.BitmapFont: AssetType.BitmapFontImage;
-            case AssetType.Atlas: AssetType.AtlasImage;
-            default: null;
-        }
-        _totalItems++;
-        if(entry.extra != null) {
-            _totalItems++;
-        }
-        _loadingQueue.push({
-            type: type,
-            name: entry.name,
-            path: entry.path,
-            size: entry.size,
-            extension: entry.extension,
-            extra: entry.extra == null ? null : {
-                type: extraType,
-                name:entry.extra.name,
-                path:entry.extra.path,
-                size:entry.extra.size,
-                extension:entry.extra.extension,
+        if(entry != null) {
+            var extraType = switch(type) {
+                case AssetType.BitmapFont: AssetType.BitmapFontImage;
+                case AssetType.Atlas: AssetType.AtlasImage;
+                default: null;
             }
-        });
+            _totalItems++;
+            if(entry.extra != null) {
+                _totalItems++;
+            }
+            _loadingQueue.push({
+                type: type,
+                name: entry.name,
+                path: entry.path,
+                size: entry.size,
+                extension: entry.extension,
+                extra: entry.extra == null ? null : {
+                    type: extraType,
+                    name:entry.extra.name,
+                    path:entry.extra.path,
+                    size:entry.extra.size,
+                    extension:entry.extra.extension,
+                }
+            });
+        }
     }
 
     dynamic public function onReady() {
@@ -142,7 +144,7 @@ class Loader {
             if (item.extra != null) {
                 loadItem(item.extra, _extensionHandlers.get(item.extra.type.getIndex()));
             }
-            haxe.Timer.delay(function() {
+            haxe.Timer.delay(() -> {
                 _itemIndex++;
                 loadNext();
             }, 0);
@@ -154,12 +156,12 @@ class Loader {
 		var request = new js.html.XMLHttpRequest();
 		request.open('GET', item.path, true);
 		request.responseType = js.html.XMLHttpRequestResponseType.ARRAYBUFFER;
-		request.onload = function (event) {
-		    _loadedItems++;
+		request.onload = (event) -> {
 			if (request.status != 200) {
 				onError(request.statusText);
 				return;
 			}
+		    _loadedItems++;
 			var bytes = haxe.io.Bytes.ofData(request.response);
 			switch (item.type) {
 				case AssetType.Font:
@@ -272,7 +274,6 @@ class Loader {
             }
         }
         if (entry == null) {
-            onError('Unable to load \'$type\' \'$name\'');
             return null;
         }
         entry.path = entry.path.replace('\\', '/');
