@@ -10,10 +10,12 @@ class ScaleFollowComponent extends Component {
     var _model:SpriteModelComponent;
     var _followModel:SpriteModelComponent;
     var _followEntity:Entity;
+    var _multiplier:Float;
 
-    public function new(followEntity:Entity) {
+    public function new(followEntity:Entity, multiplier:Float = 1.0) {
         componentType = ComponentType.Actor;
         _followEntity = followEntity;
+        _multiplier = multiplier;
     }
 
     override public function init() {
@@ -23,7 +25,7 @@ class ScaleFollowComponent extends Component {
     }
 
     override public function update(dt:Float) {
-        _model.xScale = _followModel.xScale;
-        _model.yScale = _followModel.yScale;
+        _model.xScale = _followModel.xScale * _multiplier;
+        _model.yScale = _followModel.yScale * _multiplier;
     }
 }
