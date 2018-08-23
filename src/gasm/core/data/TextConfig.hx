@@ -13,4 +13,5 @@ typedef TextConfig = {
     ?autoSize:String,
     ?align:String,
     ?scaleToFit:Bool,
+    ?letterSpacing:Int,
 }
