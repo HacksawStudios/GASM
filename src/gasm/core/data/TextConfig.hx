@@ -7,11 +7,13 @@ typedef TextConfig = {
     ?color:Null<Int>,
     ?selectable:Bool,
     ?filters:Array<Any>,
+    ?outlines:Array<Any>,
     ?backgroundColor:Int,
     ?width:Float,
     ?height:Float,
     ?autoSize:String,
     ?align:String,
     ?scaleToFit:Bool,
+    ?bitmap:Bool,
     ?letterSpacing:Int,
 }
