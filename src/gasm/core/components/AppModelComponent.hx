@@ -15,6 +15,7 @@ class AppModelComponent extends Component {
     public var resizeSignal:Signal1<TResize>;
     public var stageMouseX:Float;
     public var stageMouseY:Float;
+    public var stage:Any;
     public var frozen:Bool = true;
 
     public function new() {
