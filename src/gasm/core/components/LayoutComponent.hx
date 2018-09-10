@@ -87,27 +87,26 @@ class LayoutComponent extends Component {
 		_appModel = owner.getFromParents(AppModelComponent);
 		Assert.that(_appModel != null, 'No AppModelComponent in graph. Check that your gasm integration context is adding it.');
 		if (_appModel.scale != 1.0) {
-			if (!layoutBox.margins.left.percent) {
-				layoutBox.margins.left.value *= _appModel.scale;
+			if (layoutBox.margins != null) {
+				if (layoutBox.margins.left != null && !layoutBox.margins.left.percent) {
+					layoutBox.margins.left.value *= _appModel.scale;
+				}
+				if (layoutBox.margins.right != null && !layoutBox.margins.right.percent) {
+					layoutBox.margins.right.value *= _appModel.scale;
+				}
+				if (layoutBox.margins.top != null && !layoutBox.margins.top.percent) {
+					layoutBox.margins.top.value *= _appModel.scale;
+				}
+				if (layoutBox.margins.bottom != null && !layoutBox.margins.bottom.percent) {
+					layoutBox.margins.bottom.value *= _appModel.scale;
+				}
 			}
-			if (!layoutBox.margins.right.percent) {
-				layoutBox.margins.right.value *= _appModel.scale;
-			}
-			if (!layoutBox.margins.top.percent) {
-				layoutBox.margins.top.value *= _appModel.scale;
-			}
-			if (!layoutBox.margins.bottom.percent) {
-				layoutBox.margins.bottom.value *= _appModel.scale;
-			}
-			if (!layoutBox.size.percent) {
+			if (layoutBox.size != null && !layoutBox.size.percent) {
 				layoutBox.size.value *= _appModel.scale;
 			}
-			if (!layoutBox.padding.percent) {
+			if (layoutBox.padding != null && !layoutBox.padding.percent) {
 				layoutBox.padding.value *= _appModel.scale;
 			}
-
-			layoutBox.dimensions.x *= _appModel.scale;
-			layoutBox.dimensions.y *= _appModel.scale;
 		}
 		parent = owner.parent != null ? owner.parent.getFromParents(LayoutComponent) : null;
 		if (parent != null) {
