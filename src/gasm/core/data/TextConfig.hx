@@ -14,6 +14,6 @@ typedef TextConfig = {
     ?autoSize:String,
     ?align:String,
     ?scaleToFit:Bool,
-    ?bitmap:Bool,
+    ?cacheFiltersAsBitmap:Bool,
     ?letterSpacing:Int,
 }
