@@ -16,4 +16,5 @@ typedef TextConfig = {
     ?scaleToFit:Bool,
     ?cacheFiltersAsBitmap:Bool,
     ?letterSpacing:Int,
+    ?rotation:Float,
 }
