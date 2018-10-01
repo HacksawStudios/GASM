@@ -1,3 +1,10 @@
 .idea
 *.iml
 node_modules
+.haxelib
+.history
+.temp
+/bin
+/haxe_libraries
+/.vscode
+/build

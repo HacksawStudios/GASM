@@ -16,7 +16,6 @@ import jasper.Solver;
 import jasper.Variable;
 
 class LayoutComponent extends Component {
-
     public var computedMargins(get, null):Margins;
 
     public function get_computedMargins():Margins {
@@ -37,40 +36,40 @@ class LayoutComponent extends Component {
     var _children:Array<LayoutComponent>;
 
     public function new(box:LayoutBox, displayDelay:Int = 0) {
-        box.margins = initMargins(box.margins);
-        if (box.dock == null) {
-            box.dock = Dock.NONE;
-        }
-        box.flow = box.flow != null ? box.flow : Flow.HORIZONTAL;
-        box.vAlign = box.vAlign != null ? box.vAlign : Align.MID;
-        box.hAlign = box.hAlign != null ? box.hAlign : Align.MID;
-        constraints = {
-            x:new Variable("x"),
-            y:new Variable("y"),
-            containerW:new Variable("containerW"),
-            containerH:new Variable("containerH"),
-            leftMarg:new Variable('leftMarg'),
-            rightMarg:new Variable('rightMarg'),
-            topMarg:new Variable('topMarg'),
-            bottomMarg:new Variable('bottomMarg'),
-            left:new Variable('left'),
-            center:new Variable('center'),
-            right:new Variable('right'),
-            top:new Variable('top'),
-            middle:new Variable('middle'),
-            bottom:new Variable('bottom'),
-            contentW:new Variable('contentW'),
-            contentH:new Variable('contentH'),
-            ypos:new Variable('ypos'),
-            xpos:new Variable('xpos'),
-            yMarg:new Variable('yMarg'),
-            xMarg:new Variable('xMarg'),
-            parentW:new Variable('parentW'),
-            parentH:new Variable('parentH'),
-            xScale:new Variable('xScale'),
-            yScale:new Variable('yScale'),
-        };
         layoutBox = box;
+        layoutBox.margins = initMargins(layoutBox.margins);
+        if (layoutBox.dock == null) {
+            layoutBox.dock = Dock.NONE;
+        }
+        layoutBox.flow = layoutBox.flow != null ? layoutBox.flow : Flow.HORIZONTAL;
+        layoutBox.vAlign = layoutBox.vAlign != null ? layoutBox.vAlign : Align.MID;
+        layoutBox.hAlign = layoutBox.hAlign != null ? layoutBox.hAlign : Align.MID;
+        constraints = {
+            x: new Variable("x"),
+            y: new Variable("y"),
+            containerW: new Variable("containerW"),
+            containerH: new Variable("containerH"),
+            leftMarg: new Variable('leftMarg'),
+            rightMarg: new Variable('rightMarg'),
+            topMarg: new Variable('topMarg'),
+            bottomMarg: new Variable('bottomMarg'),
+            left: new Variable('left'),
+            center: new Variable('center'),
+            right: new Variable('right'),
+            top: new Variable('top'),
+            middle: new Variable('middle'),
+            bottom: new Variable('bottom'),
+            contentW: new Variable('contentW'),
+            contentH: new Variable('contentH'),
+            ypos: new Variable('ypos'),
+            xpos: new Variable('xpos'),
+            yMarg: new Variable('yMarg'),
+            xMarg: new Variable('xMarg'),
+            parentW: new Variable('parentW'),
+            parentH: new Variable('parentH'),
+            xScale: new Variable('xScale'),
+            yScale: new Variable('yScale'),
+        };
         _displayDelay = displayDelay;
         _children = [];
         componentType = ComponentType.Actor;
@@ -112,7 +111,6 @@ class LayoutComponent extends Component {
         }
     }
 
-
     override public function dispose():Void {
         freeze = true;
         spriteModel.dispose();
@@ -123,7 +121,7 @@ class LayoutComponent extends Component {
     }
 
     /**
-    * Perform layout. Will be called automatically on resize events.
+     * Perform layout. Will be called automatically on resize events.
     **/
     public function layout() {
         if (freeze) {
@@ -159,8 +157,8 @@ class LayoutComponent extends Component {
         var dockedBottom = getDocked(Dock.BOTTOM);
         var undocked = getDocked(Dock.NONE);
         var allChildren:Array<LayoutComponent> = dockedLeft.concat(dockedRight).concat(dockedTop).concat(dockedBottom).concat(undocked);
-        for(comp in allChildren) {
-            if(!comp.inited) {
+        for (comp in allChildren) {
+            if (!comp.inited) {
                 haxe.Timer.delay(scale, 50);
                 return;
             }
@@ -240,7 +238,6 @@ class LayoutComponent extends Component {
             layoutItem(layoutComp, solver, constraints, size, parentSize, scale, Flow.HORIZONTAL);
             xMarg += c.containerW.m_value + _computedPadding.value + c.leftMarg.m_value + c.rightMarg.m_value;
         }
-        //var paddingTotal:Float = (_computedPadding.value * (undocked.length - 1));
 
         for (layoutComp in undocked) {
             var c = layoutComp.constraints;
@@ -272,7 +269,7 @@ class LayoutComponent extends Component {
             return;
         }
         var c = layoutComp.constraints;
-        if(layoutComp.layoutBox.dimensions != null) {
+        if (layoutComp.layoutBox.dimensions != null) {
             layoutComp.spriteModel.origWidth = layoutComp.layoutBox.dimensions.x;
             layoutComp.spriteModel.origHeight = layoutComp.layoutBox.dimensions.y;
         }
@@ -294,16 +291,16 @@ class LayoutComponent extends Component {
         var hasDimensions = layoutComp.spriteModel.origWidth > 0 && layoutComp.spriteModel.origHeight > 0;
         if (childBox.size == null) {
             if (hasDimensions) {
-                switch(flow) {
+                switch (flow) {
                     case Flow.VERTICAL:
-                        childBox.size = {value:layoutComp.spriteModel.origHeight};
+                        childBox.size = {value: layoutComp.spriteModel.origHeight};
                     case Flow.HORIZONTAL:
-                        childBox.size = {value:layoutComp.spriteModel.origWidth};
+                        childBox.size = {value: layoutComp.spriteModel.origWidth};
                 }
             }
         }
         if (childBox.size != null) {
-            switch(flow) {
+            switch (flow) {
                 case Flow.VERTICAL:
                     containerW = parentW;
                     if (childBox.size.percent) {
@@ -357,7 +354,7 @@ class LayoutComponent extends Component {
         solver.addConstraint(c.contentH == scaledH);
         solver.addConstraint(c.containerW == containerW);
         solver.addConstraint(c.containerH == containerH);
-        switch(childBox.hAlign) {
+        switch (childBox.hAlign) {
             case Align.NEAR:
                 solver.addConstraint(c.x == c.left);
             case Align.MID:
@@ -365,7 +362,7 @@ class LayoutComponent extends Component {
             case Align.FAR:
                 solver.addConstraint(c.x == c.right);
         }
-        switch(childBox.vAlign) {
+        switch (childBox.vAlign) {
             case Align.NEAR:
                 solver.addConstraint(c.y >= c.top);
             case Align.MID:
@@ -401,7 +398,7 @@ class LayoutComponent extends Component {
             var parentDim = flow == Flow.VERTICAL ? parentSize.x : parentSize.y;
             val = parentDim * (size.value / 100);
         } else {
-            val = size.value;
+            val = size.value * _appModel.scale;
         }
         return val;
     }
@@ -409,11 +406,15 @@ class LayoutComponent extends Component {
     inline function calculateMargins(margins:Margins, parent:LayoutComponent):Margins {
         var parentSize = getComponentSize(parent);
         margins = initMargins(margins);
+        var bm = margins.bottom.value * _appModel.scale;
+        var tm = margins.top.value * _appModel.scale;
+        var lm = margins.left.value * _appModel.scale;
+        var rm = margins.right.value * _appModel.scale;
         return {
-            bottom: {value:margins.bottom.percent ? parentSize.y * (margins.bottom.value / 100) : margins.bottom.value},
-            top: {value:margins.top.percent ? parentSize.y * (margins.top.value / 100) : margins.top.value},
-            left: {value:margins.left.percent ? parentSize.x * (margins.left.value / 100) : margins.left.value},
-            right: {value:margins.right.percent ? parentSize.x * (margins.right.value / 100) : margins.right.value},
+            bottom: {value: margins.bottom.percent ? parentSize.y * (bm / 100) : bm},
+            top: {value: margins.top.percent ? parentSize.y * (tm / 100) : tm},
+            left: {value: margins.left.percent ? parentSize.x * (lm / 100) : lm},
+            right: {value: margins.right.percent ? parentSize.x * (rm / 100) : rm},
         };
     }
 
@@ -426,19 +427,19 @@ class LayoutComponent extends Component {
                     if (layout.layoutBox.size.percent) {
                         h = (layout.layoutBox.size.value * h) / 100;
                     } else {
-                        h = layout.layoutBox.size.value;
+                        h = layout.layoutBox.size.value * _appModel.scale;
                     }
                 } else {
                     if (layout.layoutBox.size.percent) {
                         w = (layout.layoutBox.size.value * w) / 100;
                     } else {
-                        w = layout.layoutBox.size.value;
+                        w = layout.layoutBox.size.value * _appModel.scale;
                     }
                 }
             }
         }
 
-        return {x:w, y:h};
+        return {x: w, y: h};
     }
 
     inline function getComponentScale(layout:LayoutComponent):Point {
@@ -448,7 +449,7 @@ class LayoutComponent extends Component {
             x = layout.spriteModel.xScale;
             y = layout.spriteModel.yScale;
         }
-        return {x:x, y:y};
+        return {x: x, y: y};
     }
 
     inline function calculatePadding() {
@@ -458,9 +459,9 @@ class LayoutComponent extends Component {
         } else if (layoutBox.padding.percent) {
             value = layoutBox.size.value * (layoutBox.padding.value / 100);
         } else {
-            value = layoutBox.padding.value;
+            value = layoutBox.padding.value * _appModel.scale;
         }
-        _computedPadding = {value:value};
+        _computedPadding = {value: value};
     }
 
     inline function initMargins(margins:Margins):Margins {
@@ -468,16 +469,16 @@ class LayoutComponent extends Component {
             margins = {};
         }
         if (margins.left == null) {
-            margins.left = {value:0};
+            margins.left = {value: 0};
         }
         if (margins.right == null) {
-            margins.right = {value:0};
+            margins.right = {value: 0};
         }
         if (margins.top == null) {
-            margins.top = {value:0};
+            margins.top = {value: 0};
         }
         if (margins.bottom == null) {
-            margins.bottom = {value:0};
+            margins.bottom = {value: 0};
         }
         return margins;
     }
@@ -488,92 +489,99 @@ class LayoutComponent extends Component {
 }
 
 /**
-* Layout definition, used to define layout for a box.
+ * Layout definition, used to define layout for a box.
 **/
 typedef LayoutBox = {
-?margins:Margins,
-?dock:Dock,
-?flow:Flow,
-?size:Size,
-?scale:ScaleType,
-?padding:Size,
-?vAlign:Align,
-?hAlign:Align,
-?name:String,
-?dimensions:Point,
+    ?margins:Margins,
+    ?dock:Dock,
+    ?flow:Flow,
+    ?size:Size,
+    ?scale:ScaleType,
+    ?padding:Size,
+    ?vAlign:Align,
+    ?hAlign:Align,
+    ?name:String,
+    ?dimensions:Point,
 }
 
 /**
-* Margins definition with sizes for each edge.
+ * Margins definition with sizes for each edge.
 **/
 typedef Margins = {
-?bottom:Size,
-?top:Size,
-?left:Size,
-?right:Size,
+    ?bottom:Size,
+    ?top:Size,
+    ?left:Size,
+    ?right:Size,
 }
 
 /**
-* Size definition.
+ * Size definition.
 **/
 typedef Size = {
-value:Float,
-?percent:Bool,
+    value:Float,
+    ?percent:Bool,
 }
 
 /**
-* Constraint variables used to calculate layout
+ * Constraint variables used to calculate layout
 **/
 typedef Constraints = {
-x:Variable,
-y:Variable,
+    x:Variable,
+    y:Variable,
     // Width of container, including margins
-containerW:Variable,
+    containerW:Variable,
     // Height of container, including margins
-containerH:Variable,
-leftMarg:Variable,
-rightMarg:Variable,
-topMarg:Variable,
-bottomMarg:Variable,
-left:Variable,
-center:Variable,
-right:Variable,
-top:Variable,
-middle:Variable,
-bottom:Variable,
+    containerH:Variable,
+    leftMarg:Variable,
+    rightMarg:Variable,
+    topMarg:Variable,
+    bottomMarg:Variable,
+    left:Variable,
+    center:Variable,
+    right:Variable,
+    top:Variable,
+    middle:Variable,
+    bottom:Variable,
     // Width of content, excluding margins
-contentW:Variable,
+    contentW:Variable,
     // Height of content, excluding margins
-contentH:Variable,
-ypos:Variable,
-xpos:Variable,
-yMarg:Variable,
-xMarg:Variable,
-parentW:Variable,
-parentH:Variable,
-xScale:Variable,
-yScale:Variable,
+    contentH:Variable,
+    ypos:Variable,
+    xpos:Variable,
+    yMarg:Variable,
+    xMarg:Variable,
+    parentW:Variable,
+    parentH:Variable,
+    xScale:Variable,
+    yScale:Variable,
 }
 
 /**
-* Can be either near, mid or far. If flow is horizontal, near is left and far is right. If flow is vertical, near is top and far is bottom.
+ * Can be either near, mid or far. If flow is horizontal, near is left and far is right. If flow is vertical, near is top and far is bottom.
 **/
 enum Align {
-    NEAR; MID; FAR;
+    NEAR;
+    MID;
+    FAR;
 }
 
 /**
-* Defines if the container should be docked in the parent. A child container can be docked either top, bottom, left or right.
-* Containers that is not docked (ContainerDock .NONE), as well as display object that are not containers, will be layed out
-* according to flow and alignment values of the parent.
+ * Defines if the container should be docked in the parent. A child container can be docked either top, bottom, left or right.
+ * Containers that is not docked (ContainerDock .NONE), as well as display object that are not containers, will be layed out
+ * according to flow and alignment values of the parent.
 **/
 enum Dock {
-    LEFT; RIGHT; TOP; BOTTOM; NONE;
+    LEFT;
+    RIGHT;
+    TOP;
+    BOTTOM;
+    NONE;
 }
 
 /**
-* Flow defines if children of the container should be laid out vertically or horizontally.
+ * Flow defines if children of the container should be laid out vertically or horizontally.
 **/
 enum Flow {
-    VERTICAL; HORIZONTAL;
+    VERTICAL;
+    HORIZONTAL;
 }
