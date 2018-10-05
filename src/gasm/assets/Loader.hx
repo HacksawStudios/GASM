@@ -13,6 +13,7 @@ class Loader {
     var _imageFolder = 'image';
     var _soundFolder = 'sound';
     var _atlasFolder = 'atlas';
+    var _gradientFolder = 'gradient';
     var _fontFolder = 'font';
     var _configFolder = 'config';
     var _localizedFolder = 'localized';
@@ -52,6 +53,7 @@ class Loader {
         _soundFolder = config.soundFolder != null ? config.soundFolder : _soundFolder;
         _fontFolder = config.fontFolder != null ? config.fontFolder : _fontFolder;
         _atlasFolder = config.atlasFolder != null ? config.atlasFolder : _atlasFolder;
+        _gradientFolder = config.gradientFolder != null ? config.gradientFolder : _gradientFolder;
         _configFolder = config.configFolder != null ? config.configFolder : _configFolder;
         _defaultLocale = config.defaultLocale != null ? config.defaultLocale : _defaultLocale;
         _commonFolder = config.commonFolder != null ? config.commonFolder : _commonFolder;
@@ -204,6 +206,7 @@ class Loader {
             case AssetType.Sound: _soundFolder;
             case AssetType.Font | AssetType.BitmapFont: _fontFolder;
             case AssetType.Atlas: _atlasFolder;
+            case AssetType.Gradient: _gradientFolder;
             case AssetType.Config: _configFolder;
             default: null;
         }
@@ -337,6 +340,7 @@ enum AssetType {
     Config;
     Atlas;
     AtlasImage;
+    Gradient;
 }
 
 typedef HandlerItem = {
@@ -378,6 +382,10 @@ typedef AssetConfig = {
      * Name of folder containing atlases, defaults to 'atlas'
      */
     ?atlasFolder:String,
+    /**
+     * Folder for gradient .grd assets
+    **/
+    ?gradientFolder:String,
     /**
      * Name of folder containing json config files, defaults to 'config'
      */
