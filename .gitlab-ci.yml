@@ -3,7 +3,7 @@ stages:
   - release
 
 test:
-  image: hacksawgaming/hacksaw-build
+  image: hacksawgaming/hacksaw-build:4.0.0-preview.5
   stage: test
   before_script:
     - npm i --unsafe-perm
@@ -11,7 +11,7 @@ test:
     - npm test
 
 package_release:
-  image: hacksawgaming/hacksaw-build
+  image: hacksawgaming/hacksaw-build:4.0.0-preview.5
   stage: release
   before_script:
     - apk add --update zip
@@ -22,7 +22,7 @@ package_release:
     - master
 
 package_rc:
-  image: hacksawgaming/hacksaw-build
+  image: hacksawgaming/hacksaw-build:4.0.0-preview.5
   stage: release
   before_script:
     - apk add --update zip

@@ -4,5 +4,6 @@
 -lib buddy
 -lib tweenx
 -lib travix:0.10.5
+-dce no
 -D travis
 -D buddy-colors
