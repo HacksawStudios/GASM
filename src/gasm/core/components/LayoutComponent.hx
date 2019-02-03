@@ -172,6 +172,8 @@ class LayoutComponent extends Component {
 
 		for (layoutComp in dockedTop) {
 			var c = layoutComp.constraints;
+			if (c == null)
+				continue;
 			var solver = new Solver();
 			solver.addConstraint(c.xMarg == xMarg);
 			solver.addConstraint(c.yMarg == yMarg);
@@ -189,6 +191,8 @@ class LayoutComponent extends Component {
 		}
 		for (layoutComp in dockedBottom) {
 			var c = layoutComp.constraints;
+			if (c == null)
+				continue;
 			var solver = new Solver();
 			solver.addConstraint(c.xMarg == xMarg);
 			solver.addConstraint(c.yMarg == yMarg);
@@ -206,6 +210,8 @@ class LayoutComponent extends Component {
 		}
 		for (layoutComp in dockedLeft) {
 			var c = layoutComp.constraints;
+			if (c == null)
+				continue;
 			var solver = new Solver();
 			solver.addConstraint(c.xMarg == xMarg);
 			solver.addConstraint(c.yMarg == yMarg);
@@ -223,6 +229,8 @@ class LayoutComponent extends Component {
 		}
 		for (layoutComp in dockedRight) {
 			var c = layoutComp.constraints;
+			if (c == null)
+				continue;
 			var solver = new Solver();
 			solver.addConstraint(c.xMarg == xMarg);
 			solver.addConstraint(c.yMarg == yMarg);
@@ -241,6 +249,8 @@ class LayoutComponent extends Component {
 
 		for (layoutComp in undocked) {
 			var c = layoutComp.constraints;
+			if (c == null)
+				continue;
 			var solver = new Solver();
 			solver.addConstraint(c.xMarg == xMarg);
 			solver.addConstraint(c.yMarg == yMarg);
