@@ -24,8 +24,12 @@ class FadeComponent extends Component {
 			_model.alpha = _config.update(rate);
 		} else {
 			_model.alpha = _config.update(1);
+			if (_config.onComplete != null) {
+				_config.onComplete();
+			}
 			owner.remove(this);
 		}
+	
 		super.update(dt);
 	}
 }
@@ -34,4 +38,5 @@ class FadeComponent extends Component {
 class FadeConfig {
 	public var duration:Float;
 	public var update:(rate:Float) -> Float;
+	public var onComplete:() -> Void = null;
 }
