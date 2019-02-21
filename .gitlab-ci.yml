@@ -3,31 +3,41 @@ stages:
   - release
 
 test:
-  image: hacksawgaming/hacksaw-build:4.0.0-preview.5
+  image: hacksawgaming/hacksaw-build:4.0.0-rc.1-4
   stage: test
   before_script:
     - npm i --unsafe-perm
   script:
     - npm test
+  except:
+    refs:
+      - tags
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+(?:-rc\.[0-9]+)?/
 
 package_release:
-  image: hacksawgaming/hacksaw-build:4.0.0-preview.5
+  image: hacksawgaming/hacksaw-build:4.0.0-rc.1-4
   stage: release
   before_script:
-    - apk add --update zip
     - npm i
   script:
     - $(npm bin)/gitlab-ci-releaser --npm
   only:
-    - master
+    refs:
+      - master
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+/ 
 
 package_rc:
-  image: hacksawgaming/hacksaw-build:4.0.0-preview.5
+  image: hacksawgaming/hacksaw-build:4.0.0-rc.1-4
   stage: release
   before_script:
-    - apk add --update zip
     - npm i
   script:
     - $(npm bin)/gitlab-ci-releaser --npm --preid rc
   only:
     - develop
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+(?:-rc\.[0-9]+)?/

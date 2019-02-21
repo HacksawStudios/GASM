@@ -8,7 +8,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@hacksawstudios/deployer": "^1.1.4",
     "@hacksawstudios/gitlab-ci-releaser": "^2.0.1",
     "@hacksawstudios/haxe-module-installer": "^1.0.7",
     "fs-extra": "^7.0.1"
@@ -27,5 +26,5 @@
   "bugs": {
     "url": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM/issues"
   },
-  "homepage": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM#README"
+  "homepage": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM"
 }
