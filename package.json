@@ -1,6 +1,6 @@
 {
   "name": "@hacksawstudios/gasm",
-  "version": "1.21.0-rc.0",
+  "version": "1.20.0-rc.0",
   "description": "Entity Component System",
   "main": "index.js",
   "directories": {
@@ -8,7 +8,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@hacksawstudios/deployer": "^1.1.4",
     "@hacksawstudios/gitlab-ci-releaser": "^2.0.1",
     "@hacksawstudios/haxe-module-installer": "^1.0.7",
     "fs-extra": "^7.0.1"
