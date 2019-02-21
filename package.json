@@ -1,6 +1,6 @@
 {
   "name": "@hacksawstudios/gasm",
-  "version": "1.20.0-rc.0",
+  "version": "1.21.0-rc.0",
   "description": "Entity Component System",
   "main": "index.js",
   "directories": {
@@ -26,5 +26,5 @@
   "bugs": {
     "url": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM/issues"
   },
-  "homepage": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM#README"
+  "homepage": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM"
 }
