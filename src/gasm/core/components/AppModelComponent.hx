@@ -7,22 +7,23 @@ import gasm.core.math.geom.Point;
 import gasm.core.enums.ComponentType;
 
 class AppModelComponent extends Component {
-    /**
-     * Device orientation.
-    **/
-    public var orientation:Orientation;
-    public var stageSize:Point = {x: 0, y: 0};
-    public var scale:Float = 1.0;
-    public var resizeSignal:Signal1<TResize>;
-    public var stageMouseX:Float;
-    public var stageMouseY:Float;
-    public var stage:Any;
-    public var frozen:Bool = true;
-    public var freezeSignal:Signal1<Bool>;
+	/**
+	 * Device orientation.
+	**/
+	public var orientation:Orientation;
+	public var stageSize:Point = {x: 0, y: 0};
+	public var scale:Float = 1.0;
+	public var resizeSignal:Signal1<TResize>;
+	public var stageMouseX:Float;
+	public var stageMouseY:Float;
+	public var stage:Any;
+	public var stage3d:Any;
+	public var frozen:Bool = true;
+	public var freezeSignal:Signal1<Bool>;
 
-    public function new() {
-        componentType = ComponentType.Model;
-        resizeSignal = new Signal1<TResize>();
-        freezeSignal = new Signal1<Bool>();
-    }
+	public function new() {
+		componentType = ComponentType.Model;
+		resizeSignal = new Signal1<TResize>();
+		freezeSignal = new Signal1<Bool>();
+	}
 }
