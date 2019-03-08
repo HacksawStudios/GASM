@@ -15,6 +15,7 @@ class CoreSystem extends System implements ISystem {
 		super();
 		type = SystemType.CORE;
 		componentFlags.set(ComponentType.GraphicsModel);
+		componentFlags.set(ComponentType.Graphics3DModel);
 		componentFlags.set(ComponentType.TextModel);
 		componentFlags.set(ComponentType.ActiveModel);
 		componentFlags.set(ComponentType.SoundModel);
