@@ -1,9 +1,6 @@
 package gasm.core.components;
 
 import gasm.core.api.singnals.TResize;
-import gasm.core.components.LayoutComponent.Align;
-import gasm.core.components.LayoutComponent.Constraints;
-import gasm.core.components.LayoutComponent.LayoutBox;
 import gasm.core.components.SpriteModelComponent;
 import gasm.core.enums.ComponentType;
 import gasm.core.enums.EventType;
