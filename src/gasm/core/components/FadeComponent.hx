@@ -6,6 +6,7 @@ class FadeComponent extends Component {
 	var _config:FadeConfig;
 	var _time:Float;
 	var _model:SpriteModelComponent;
+	var _model3D:ThreeDModelComponent;
 
 	public function new(config:FadeConfig) {
 		_config = config;
@@ -14,6 +15,7 @@ class FadeComponent extends Component {
 
 	override public function init() {
 		_model = owner.get(SpriteModelComponent);
+		_model3D = owner.get(ThreeDModelComponent);
 		_time = 0.0;
 	}
 
@@ -21,15 +23,27 @@ class FadeComponent extends Component {
 		var rate = _time / _config.duration;
 		_time += dt;
 		if (rate <= 1) {
-			_model.alpha = _config.update(rate);
+			var val = _config.update(rate);
+			if (_model != null) {
+				_model.alpha = val;
+			}
+			if (_model3D != null) {
+				_model3D.alpha = val;
+			}
 		} else {
-			_model.alpha = _config.update(1);
+			var val = _config.update(1);
+			if (_model != null) {
+				_model.alpha = val;
+			}
+			if (_model3D != null) {
+				_model3D.alpha = val;
+			}
 			if (_config.onComplete != null) {
 				_config.onComplete();
 			}
 			owner.remove(this);
 		}
-	
+
 		super.update(dt);
 	}
 }
@@ -38,5 +52,5 @@ class FadeComponent extends Component {
 class FadeConfig {
 	public var duration:Float;
 	public var update:(rate:Float) -> Float;
-	public var onComplete:() -> Void = null;
+	public var onComplete:Null<() -> Void> = null;
 }
