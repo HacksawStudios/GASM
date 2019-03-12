@@ -6,6 +6,7 @@ import gasm.core.components.SoundModelComponent;
 import haxe.macro.Expr;
 import haxe.macro.Expr.ExprOf;
 import gasm.core.components.SpriteModelComponent;
+import gasm.core.components.ThreeDModelComponent;
 
 using Lambda;
 using haxe.macro.Tools;
@@ -82,6 +83,8 @@ using haxe.macro.Tools;
 				add(new SpriteModelComponent());
 			case Text:
 				add(new TextModelComponent());
+			case Graphics3D:
+				add(new ThreeDModelComponent());
 			case Sound:
 				add(new SoundModelComponent());
 			default:

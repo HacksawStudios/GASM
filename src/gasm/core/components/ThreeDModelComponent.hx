@@ -1,11 +1,11 @@
 package gasm.core.components;
 
-import h3d.Vector;
 import gasm.core.Component;
 import gasm.core.enums.ComponentType;
 import gasm.core.enums.EventType;
 import gasm.core.events.InteractionEvent;
 import gasm.core.math.geom.Point;
+import gasm.core.math.geom.Vector;
 
 /**
  * Model to interface between different graphics backends.

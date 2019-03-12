@@ -164,7 +164,8 @@ class Loader {
                     untyped {
                         var s = js.Browser.document.createStyleElement();
                         s.type = "text/css";
-                        s.innerHTML = "@font-face{ font-family: " + fontResourceName + "; src: url('data:font/ttf;base64," + Base64.encode(bytes) + "') format('truetype'); }";
+                        s.innerHTML = "@font-face{ font-family: " + fontResourceName + "; src: url('data:font/ttf;base64," + Base64.encode(bytes) +
+                            "') format('truetype'); }";
                         js.Browser.document.getElementsByTagName('head')[0].appendChild(s);
                         // create a div in the page to force font loading
                         var div = js.Browser.document.createDivElement();
@@ -269,7 +270,7 @@ class Loader {
                         entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
                     case AssetType.Atlas:
                         entry = files.find(val -> val.extension == '.atlas');
-                        entry.extra = files.find(val -> val.extension == '.png');
+                        entry.extra = files.find(val -> val.extension == '.png' || val.extension == '.jpg');
                         entry.extra.type = 'file';
                         entry.extra.path = entry.extra.path.replace('\\', '/');
                         entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
@@ -278,8 +279,8 @@ class Loader {
                         var preferedExtension = getPreferedExtension(type);
                         if (preferedExtension == null) {
                             trace('Multiple files with same name found, but no prefered extension configured.');
-                            trace('When constructing Loader add format param defining if you prefer to use ' + [for (match in files) match.extension].join(' or ') + ' for type ' +
-                                type.getName);
+                            trace('When constructing Loader add format param defining if you prefer to use ' + [for (match in files) match.extension]
+                                .join(' or ') + ' for type ' + type.getName);
                         }
                         entry = files.find(val -> val.extension == preferedExtension);
                 }
