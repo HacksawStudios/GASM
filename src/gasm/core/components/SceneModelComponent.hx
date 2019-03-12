@@ -62,6 +62,7 @@ class SceneModelComponent extends Component {
 			}
 			scene.entity.dispose();
 			dirty = true;
+			scenes.remove(scene);
 		}
 	}
 
