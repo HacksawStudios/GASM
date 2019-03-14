@@ -23,7 +23,10 @@ class SceneModelComponent extends Component {
 		scenes.push(scene);
 		scenes.sort((a, b) -> a.layerIndex > b.layerIndex ? 1 : -1);
 		var i = 0;
-		scenes.map(s -> s.layerIndex = i++);
+		scenes.map(s -> {
+			s.layerIndex = i++;
+			return s;
+		});
 		addEntity(scene, owner);
 		dirty = true;
 		return scene.entity;
