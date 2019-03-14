@@ -19,6 +19,7 @@ class AppModelComponent extends Component {
 	public var frozen:Bool = true;
 	public var freezeSignal:Signal1<Bool>;
 	public var customRenderCallback:Null<(engine:Any) -> Void> = null;
+	public var pixelRatio = 1.0;
 
 	public function new() {
 		componentType = ComponentType.Model;
