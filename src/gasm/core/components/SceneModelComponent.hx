@@ -82,4 +82,5 @@ class SceneLayer {
 	public var layerIndex:Null<Int> = null;
 	public var interactive = false;
 	public var entity:Entity = null;
+	public var instance:Any = null;
 }
