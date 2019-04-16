@@ -293,7 +293,6 @@ class Loader {
 				entry = files[0];
 			}
 		}
-		trace('entry', entry);
 		if (entry == null) {
 			return null;
 		}

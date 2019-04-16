@@ -1,5 +1,7 @@
 package gasm.core.enums;
+
 enum ScaleType {
-    FIT;
-    PROPORTIONAL;
+	FIT;
+	PROPORTIONAL;
+	CROP;
 }

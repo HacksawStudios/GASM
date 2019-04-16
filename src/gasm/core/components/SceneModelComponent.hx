@@ -49,16 +49,19 @@ class SceneModelComponent extends Component {
 	}
 
 	public function removeScene(name:String) {
-		var scene = scenes.find(s -> s.name == name);
+		final scene = scenes.find(s -> s.name == name);
 		if (scene != null) {
-			var s = sceneMap.get(scene.name);
-			var s2d:h2d.Scene = s;
+			final s2d:h2d.Scene = scene.instance;
 			if (s2d != null) {
+				s2d.removeChildren();
 				s2d.remove();
+				s2d.dispose();
 			}
-			var s3d:h3d.scene.Scene = s;
+			final s3d:h3d.scene.Scene = scene.instance;
 			if (s3d != null) {
+				s3d.removeChildren();
 				s3d.remove();
+				s3d.dispose();
 			}
 			if (scene.entity.parent != null) {
 				scene.entity.parent.removeChild(scene.entity);
@@ -66,6 +69,7 @@ class SceneModelComponent extends Component {
 			scene.entity.dispose();
 			dirty = true;
 			scenes.remove(scene);
+			sceneMap.remove(scene.name);
 		}
 	}
 
