@@ -7,6 +7,7 @@ import haxe.macro.Expr;
 import haxe.macro.Expr.ExprOf;
 import gasm.core.components.SpriteModelComponent;
 import gasm.core.components.ThreeDModelComponent;
+import gasm.core.utils.Assert;
 
 using Lambda;
 using haxe.macro.Tools;
@@ -54,14 +55,16 @@ using haxe.macro.Tools;
 	 * @returns This instance, for chaining.
 	 */
 	public function add(component:Component):Entity {
+		var baseName = component.baseName;
+		Assert.that(_compMap != null, 'Trying to add to disposed entity. $baseName');
 		if (component.owner != null) {
 			component.owner.remove(component);
 		}
-		var baseName = component.baseName;
 		var prev = _compMap.get(baseName);
 		if (prev != null) {
 			remove(prev);
 		}
+
 		_compMap.set(baseName, component);
 
 		var tail = null;
@@ -122,6 +125,7 @@ using haxe.macro.Tools;
 			prev = comp;
 			comp = next;
 		}
+		_compMap = null;
 		return false;
 	}
 
@@ -250,12 +254,13 @@ using haxe.macro.Tools;
 			parent.removeChild(this);
 			parent = null;
 		}
-		while (firstComponent != null) {
+		if (firstComponent != null) {
 			var nextComponent = firstComponent.next;
-			firstComponent.dispose();
-			firstComponent = nextComponent;
+			while (nextComponent != null) {
+				remove(nextComponent);
+				nextComponent = nextComponent.next;
+			}
 		}
 		disposeChildren();
-		_compMap = new Map<String, Component>();
 	}
 }
