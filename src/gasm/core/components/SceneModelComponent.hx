@@ -33,6 +33,22 @@ class SceneModelComponent extends Component {
 	}
 
 	/**
+	 * Make scene invisible
+	 * @param name Name of scene to make invisible
+	 */
+	public function hideScene(name:String) {
+		// Override in integration
+	}
+
+	/**
+	 * Make scene visible
+	 * @param name Name of scene to make visible
+	 */
+	public function showScene(name:String) {
+		// Override in integration
+	}
+
+	/**
 	 * Disable interactivity for a scene
 	 * @param name Name of scene to disable
 	 */
