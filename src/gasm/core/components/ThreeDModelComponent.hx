@@ -14,7 +14,7 @@ import gasm.core.math.geom.Vector;
  * @author Leo Bergman
  */
 class ThreeDModelComponent extends Component {
-	@:isVar public var pos(default, set) = new Vector(0, 0, 0);
+	@:isVar public var pos(get, set) = new Vector(0, 0, 0);
 	@:isVar public var offset(default, set) = new Vector(0, 0, 0);
 	@:isVar public var scale(default, set) = new Vector(1., 1., 1.);
 	@:isVar public var dimensions(default, set) = new Vector(0, 0, 0);
@@ -107,35 +107,41 @@ class ThreeDModelComponent extends Component {
 		}
 	}
 
-	public function set_pos(val:Vector) {
+	function get_pos():Vector {
+		// Set to dirty, since we can modify vector positions in reference
+		dirty = true;
+		return pos;
+	}
+
+	function set_pos(val:Vector) {
 		pos = val;
 		dirty = true;
 		return val;
 	}
 
-	public function set_x(val:Float) {
+	function set_x(val:Float) {
 		pos.x = val;
 		dirty = true;
 		return val;
 	}
 
-	public function set_y(val:Float) {
+	function set_y(val:Float) {
 		pos.y = val;
 		dirty = true;
 		return val;
 	}
 
-	public function set_z(val:Float) {
+	function set_z(val:Float) {
 		pos.z = val;
 		dirty = true;
 		return val;
 	}
 
-	public function get_width() {
+	function get_width() {
 		return dimensions.x;
 	}
 
-	public function set_width(val:Float) {
+	function set_width(val:Float) {
 		dimensions.x = val;
 		if (val > 0 && origDimensions.x > 0) {
 			scale.x = val / origDimensions.x;
@@ -144,11 +150,11 @@ class ThreeDModelComponent extends Component {
 		return val;
 	}
 
-	public function get_height() {
+	function get_height() {
 		return dimensions.y;
 	}
 
-	public function set_height(val:Float) {
+	function set_height(val:Float) {
 		dimensions.y = val;
 		if (val > 0 && origDimensions.y > 0) {
 			scale.y = val / origDimensions.y;
@@ -157,11 +163,11 @@ class ThreeDModelComponent extends Component {
 		return val;
 	}
 
-	public function get_depth() {
+	function get_depth() {
 		return dimensions.z;
 	}
 
-	public function set_depth(val:Float) {
+	function set_depth(val:Float) {
 		dimensions.z = val;
 		if (dimensions.z > 0 && origDimensions.z > 0) {
 			scale.z = val / origDimensions.z;
@@ -170,11 +176,11 @@ class ThreeDModelComponent extends Component {
 		return val;
 	}
 
-	public function get_xScale() {
+	function get_xScale() {
 		return scale.x;
 	}
 
-	public function set_xScale(val:Float) {
+	function set_xScale(val:Float) {
 		scale.x = val;
 		if (origDimensions.x > 0) {
 			dimensions.x = scale.x * origDimensions.x;
@@ -183,11 +189,11 @@ class ThreeDModelComponent extends Component {
 		return val;
 	}
 
-	public function get_yScale() {
+	function get_yScale() {
 		return scale.y;
 	}
 
-	public function set_yScale(val:Float) {
+	function set_yScale(val:Float) {
 		scale.y = val;
 		if (origDimensions.y > 0) {
 			dimensions.y = scale.y * origDimensions.y;
@@ -196,11 +202,11 @@ class ThreeDModelComponent extends Component {
 		return val;
 	}
 
-	public function get_zScale() {
+	function get_zScale() {
 		return scale.z;
 	}
 
-	public function set_zScale(val:Float) {
+	function set_zScale(val:Float) {
 		scale.z = val;
 		if (origDimensions.z > 0) {
 			dimensions.z = scale.z * origDimensions.z;
@@ -209,30 +215,30 @@ class ThreeDModelComponent extends Component {
 		return val;
 	}
 
-	public function set_alpha(val:Float) {
+	function set_alpha(val:Float) {
 		alpha = val;
 		dirty = true;
 		return val;
 	}
 
-	public function set_dimensions(val:Vector) {
+	function set_dimensions(val:Vector) {
 		dimensions = val;
 		dirty = true;
 		return val;
 	}
 
-	public function set_origDimensions(val:Vector) {
+	function set_origDimensions(val:Vector) {
 		origDimensions = val;
 		return val;
 	}
 
-	public function set_offset(val:Vector) {
+	function set_offset(val:Vector) {
 		offset = val;
 		dirty = true;
 		return val;
 	}
 
-	public function set_scale(val:Vector) {
+	function set_scale(val:Vector) {
 		scale = val;
 		dirty = true;
 		return val;

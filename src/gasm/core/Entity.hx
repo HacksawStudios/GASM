@@ -255,7 +255,7 @@ using haxe.macro.Tools;
 			parent = null;
 		}
 		if (firstComponent != null) {
-			var nextComponent = firstComponent.next;
+			var nextComponent = firstComponent;
 			while (nextComponent != null) {
 				remove(nextComponent);
 				nextComponent = nextComponent.next;
