@@ -16,6 +16,7 @@ class SpriteModelComponent extends Component {
 	@:isVar public var x(default, set):Float = 0;
 	@:isVar public var y(default, set):Float = 0;
 	@:isVar public var alpha(default, set):Float = 1;
+	@:isVar public var visible(get, set):Bool = true;
 	public var width(get, set):Float;
 	public var height(get, set):Float;
 	public var xScale(get, set):Float;
@@ -32,7 +33,6 @@ class SpriteModelComponent extends Component {
 	public var speedX(default, default):Float;
 	public var speedY(default, default):Float;
 	public var interactive(default, default):Bool = false;
-	public var visible(default, default):Bool = true;
 	public var mask(default, default):Any;
 	public var dirty(default, default):Bool = true;
 
@@ -177,6 +177,16 @@ class SpriteModelComponent extends Component {
 		if (origHeight > 0) {
 			_height = _yScale * origHeight;
 		}
+		dirty = true;
+		return val;
+	}
+
+	public function get_visible() {
+		return visible;
+	}
+
+	public function set_visible(val:Bool) {
+		visible = val;
 		dirty = true;
 		return val;
 	}
