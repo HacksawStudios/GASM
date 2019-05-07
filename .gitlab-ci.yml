@@ -21,7 +21,7 @@ package_release:
   before_script:
     - yarn
   script:
-    - npx gitlab-ci-releaser --npm
+    - npx @hacksawstudios/gitlab-ci-releaser --npm
   only:
     refs:
       - master
@@ -35,7 +35,7 @@ package_rc:
   before_script:
     - yarn
   script:
-    - npx gitlab-ci-releaser --npm --preid rc
+    - npx @hacksawstudios/gitlab-ci-releaser --npm --preid rc
   only:
     - develop
   except:
