@@ -13,7 +13,7 @@
     "fs-extra": "7.0.1"
   },
   "scripts": {
-    "postinstall": "npx @hacksawstudios/haxe-module-installer",
+    "postinstall": "$(npm bin)/haxe-module-installer",
     "pretest": "haxelib newrepo && haxelib --always install tests.hxml && haxelib run travix install",
     "test": "haxelib run travix node"
   },
