@@ -9,11 +9,11 @@
   "dependencies": {},
   "devDependencies": {
     "@hacksawstudios/gitlab-ci-releaser": "2.0.1",
-    "@hacksawstudios/haxe-module-installer": "1.0.8",
+    "@hacksawstudios/haxe-module-installer": "1.0.11-rc.2",
     "fs-extra": "7.0.1"
   },
   "scripts": {
-    "postinstall": "npx haxe-module-installer",
+    "postinstall": "npx @hacksawstudios/haxe-module-installer",
     "pretest": "haxelib newrepo && haxelib --always install tests.hxml && haxelib run travix install",
     "test": "haxelib run travix node"
   },
