@@ -236,7 +236,11 @@ class LayoutComponent extends Component {
 
 			solver.addConstraint(c.left == (c.leftMarg + c.parentW - (c.containerW + c.xMarg)));
 			solver.addConstraint(c.right == c.parentW - (c.contentW + c.rightMarg + c.xMarg));
-			solver.addConstraint(c.center == c.leftMarg - c.xMarg + c.parentW - c.containerW + ((c.containerW - (c.contentW + c.leftMarg + c.rightMarg)) / 2));
+			solver.addConstraint(c.center == c.leftMarg
+				- c.xMarg
+				+ c.parentW
+				- c.containerW
+				+ ((c.containerW - (c.contentW + c.leftMarg + c.rightMarg)) / 2));
 			solver.addConstraint(c.top >= c.ypos + c.topMarg);
 			solver.addConstraint(c.middle == c.top + (c.containerH - (c.contentH + c.topMarg + c.bottomMarg)) / 2);
 			solver.addConstraint(c.bottom == c.containerH - (c.contentH + c.bottomMarg));

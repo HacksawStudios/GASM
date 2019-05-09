@@ -17,6 +17,8 @@ class SpriteModelComponent extends Component {
 	@:isVar public var y(default, set):Float = 0;
 	@:isVar public var alpha(default, set):Float = 1;
 	@:isVar public var visible(get, set):Bool = true;
+	@:isVar public var offsetX(default, set):Float = 0;
+	@:isVar public var offsetY(default, set):Float = 0;
 	public var width(get, set):Float;
 	public var height(get, set):Float;
 	public var xScale(get, set):Float;
@@ -28,8 +30,6 @@ class SpriteModelComponent extends Component {
 	public var stageMouseX(default, default):Float = 0;
 	public var stageMouseY(default, default):Float = 0;
 	public var stageSize(default, default):Point = {x: 0, y: 0};
-	public var offsetX(default, default):Float = 0;
-	public var offsetY(default, default):Float = 0;
 	public var speedX(default, default):Float;
 	public var speedY(default, default):Float;
 	public var interactive(default, default):Bool = false;
@@ -173,6 +173,7 @@ class SpriteModelComponent extends Component {
 	}
 
 	public function set_yScale(val:Float) {
+		trace('yscakle');
 		_yScale = val;
 		if (origHeight > 0) {
 			_height = _yScale * origHeight;
@@ -193,7 +194,26 @@ class SpriteModelComponent extends Component {
 
 	public function set_alpha(val:Float) {
 		alpha = val;
+		// trace('set alpha');
 		dirty = true;
+		return val;
+	}
+
+	public function set_offsetX(val:Float) {
+		// if (val != offsetX) {
+		trace('val', val);
+		trace('offsetX', offsetX);
+		dirty = true;
+		offsetX = val;
+		// }
+		return val;
+	}
+
+	public function set_offsetY(val:Float) {
+		// if (val != offsetY) {
+		dirty = true;
+		offsetY = val;
+		// }
 		return val;
 	}
 }

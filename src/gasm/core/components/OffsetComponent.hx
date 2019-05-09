@@ -25,7 +25,13 @@ class OffsetComponent extends Component {
 
 	override public function update(dt:Float) {
 		var model:SpriteModelComponent = owner.get(SpriteModelComponent);
-		model.offsetX = offset.x * _scale * _appModel.scale;
-		model.offsetY = offset.y * _scale * _appModel.scale;
+		haxe.Timer.delay(function() {
+			if (model.offsetX != offset.x * _scale * _appModel.scale) {
+				model.offsetX = offset.x * _scale * _appModel.scale;
+			}
+			if (model.offsetY != offset.y * _scale * _appModel.scale) {
+				model.offsetY = offset.y * _scale * _appModel.scale;
+			}
+		}, 0);
 	}
 }
