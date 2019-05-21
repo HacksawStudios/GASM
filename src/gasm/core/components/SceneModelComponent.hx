@@ -21,12 +21,7 @@ class SceneModelComponent extends Component {
 			scene.layerIndex = scenes.length;
 		}
 		scenes.push(scene);
-		scenes.sort((a, b) -> a.layerIndex > b.layerIndex ? 1 : -1);
-		var i = 0;
-		scenes.map(s -> {
-			s.layerIndex = i++;
-			return s;
-		});
+		sortScenes();
 		addEntity(scene, owner);
 		dirty = true;
 		return scene.entity;
@@ -89,9 +84,44 @@ class SceneModelComponent extends Component {
 		}
 	}
 
+	public function moveToTop(name:String) {
+		final scene = scenes.find(val -> name == val.name);
+		if (scene != null) {
+			scene.layerIndex = scenes.length;
+			sortScenes();
+		}
+	}
+
+	public function moveToBottom(name:String) {
+		final scene = scenes.find(val -> name == val.name);
+		if (scene != null) {
+			scene.layerIndex = -1;
+			sortScenes();
+		}
+	}
+
+	public function swapDepths(nameA:String, nameB:String) {
+		final sceneA = scenes.find(val -> nameA == val.name);
+		final sceneB = scenes.find(val -> nameB == val.name);
+		final layerIndexA = sceneA.layerIndex;
+		final layerIndexB = sceneB.layerIndex;
+		sceneA.layerIndex = layerIndexB;
+		sceneB.layerIndex = layerIndexA;
+		sortScenes();
+	}
+
 	function addEntity(scene:SceneLayer, baseEntity:Entity):Entity {
 		// Override in integration
 		return null;
+	}
+
+	function sortScenes() {
+		scenes.sort((a, b) -> a.layerIndex > b.layerIndex ? 1 : -1);
+		var i = 0;
+		scenes.map(s -> {
+			s.layerIndex = i++;
+			return s;
+		});
 	}
 }
 
