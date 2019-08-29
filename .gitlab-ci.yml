@@ -6,7 +6,7 @@ test:
   image: hacksawgaming/hacksaw-build:4.0.0-rc.3-1
   stage: test
   before_script:
-    - pnpm i --unsafe-perm
+    - yarn
   script:
     - npm test
   except:
@@ -19,7 +19,7 @@ package_release:
   image: hacksawgaming/hacksaw-build:4.0.0-rc.3-1
   stage: release
   before_script:
-    - pnpm i --unsafe-perm
+    - yarn
   script:
     - npx @hacksawstudios/gitlab-ci-releaser --npm
   only:
@@ -33,7 +33,7 @@ package_rc:
   image: hacksawgaming/hacksaw-build:4.0.0-rc.3-1
   stage: release
   before_script:
-    - pnpm i --unsafe-perm
+    - yarn
   script:
     - npx @hacksawstudios/gitlab-ci-releaser --npm --preid rc
   only:
