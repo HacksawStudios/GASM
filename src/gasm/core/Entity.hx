@@ -81,6 +81,7 @@ using haxe.macro.Tools;
 		}
 		component.owner = this;
 		component.next = null;
+		Assert.that(component.componentType != null, 'You need to set componentType in contructor of a Component');
 		switch component.componentType {
 			case Graphics:
 				add(new SpriteModelComponent());
