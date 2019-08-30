@@ -8,3 +8,4 @@ node_modules
 /haxe_libraries
 /.vscode
 /build
+*.log

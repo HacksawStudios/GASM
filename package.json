@@ -1,20 +1,10 @@
 {
   "name": "@hacksawstudios/gasm",
-  "version": "1.16.1",
+  "version": "1.30.0-rc.1",
   "description": "Entity Component System",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "@hacksawstudios/deployer": "^1.1.4",
-    "@hacksawstudios/gitlab-ci-releaser": "^2.0.0",
-    "@hacksawstudios/haxe-module-installer": "^1.0.5",
-    "fs-extra": "^6.0.1"
-  },
   "scripts": {
-    "postinstall": "node_modules/.bin/haxe-module-installer",
+    "postinstall": "npx @hacksawstudios/haxe-module-installer",
     "pretest": "haxelib newrepo && haxelib --always install tests.hxml && haxelib run travix install",
     "test": "haxelib run travix node"
   },
@@ -22,10 +12,17 @@
     "type": "git",
     "url": "git+ssh://git@gitlab.hacksawstudios.com/hacksawgaming/GASM.git"
   },
-  "author": "",
+  "author": "hacksawstudios",
   "license": "MIT",
   "bugs": {
     "url": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM/issues"
   },
-  "homepage": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM#README"
+  "homepage": "https://gitlab.hacksawstudios.com/hacksawgaming/GASM",
+  "devDependencies": {
+    "@hacksawstudios/gitlab-ci-releaser": "2.0.1",
+    "fs-extra": "7.0.1"
+  },
+  "dependencies": {
+    "@hacksawstudios/haxe-module-installer": "1.0.11"
+  }
 }
