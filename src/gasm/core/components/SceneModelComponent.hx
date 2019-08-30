@@ -16,6 +16,7 @@ class SceneModelComponent extends Component {
 	}
 
 	public function addScene(scene:SceneLayer):Entity {
+		removeScene(scene.name);
 		scene.entity = new Entity(scene.name);
 		if (scene.layerIndex == null) {
 			scene.layerIndex = scenes.length;
