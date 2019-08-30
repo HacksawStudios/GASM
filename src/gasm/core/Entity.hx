@@ -134,9 +134,14 @@ using haxe.macro.Tools;
 	#else
 	macro public function get<T:Component>(self:Expr, componentClass:ExprOf<Class<T>>):ExprOf<T> {
 		var componentName = macro $componentClass.BASE_NAME;
+		#if haxe4
+		return macro Std.downcast($self.getComponentByName($componentName), $componentClass);
+		#else
 		return macro Std.instance($self.getComponentByName($componentName), $componentClass);
+		#end
 	}
 	#end
+
 	#if (display || dox)
 	public function getFromParents<T:Component>(componentClass:Class<T>):T {}
 	#else
@@ -145,6 +150,7 @@ using haxe.macro.Tools;
 		return macro $self.getFromParentsByName($name, $componentClass);
 	}
 	#end
+
 	#if (display || dox)
 	public function getFromRoot<T:Component>(componentClass:Class<T>):T {}
 	#else
@@ -153,6 +159,7 @@ using haxe.macro.Tools;
 		return macro $self.getFromRootByName($name, $componentClass);
 	}
 	#end
+
 	inline public function getComponentByName(name:String):Component {
 		return _compMap.get(name);
 	}
