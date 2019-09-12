@@ -38,11 +38,13 @@ class TweenComponent extends Component {
 
 	inline function tween() {
 		if (_spriteModel != null) {
-			TweenX.to(_spriteModel, _properties, _duration, _easing).onFinish(function() {
+			TweenX.to(_spriteModel, _properties, _duration, _easing).onFinish(() -> {
 				if (_completeFunc != null) {
 					_completeFunc();
 				}
-				owner.remove(this);
+				if (owner != null) {
+					owner.remove(this);
+				}
 			});
 		} else {
 			trace("warn",
