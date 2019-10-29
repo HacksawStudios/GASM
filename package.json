@@ -23,6 +23,6 @@
     "fs-extra": "7.0.1"
   },
   "dependencies": {
-    "@hacksawstudios/haxe-module-installer": "1.0.11"
+    "@hacksawstudios/haxe-module-installer": "1.2.0"
   }
 }
