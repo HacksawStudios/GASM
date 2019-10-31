@@ -28,8 +28,8 @@ class SpriteModelComponent extends Component {
 	public var stageMouseX(default, default):Float = 0;
 	public var stageMouseY(default, default):Float = 0;
 	public var stageSize(default, default):Point = {x: 0, y: 0};
-	public var offsetX(default, default):Float = 0;
-	public var offsetY(default, default):Float = 0;
+	public var offsetX(default, set):Float = 0;
+	public var offsetY(default, set):Float = 0;
 	public var speedX(default, default):Float;
 	public var speedY(default, default):Float;
 	public var interactive(default, default):Bool = false;
@@ -125,6 +125,18 @@ class SpriteModelComponent extends Component {
 
 	public function set_y(val:Float) {
 		y = val;
+		dirty = true;
+		return val;
+	}
+
+	public function set_offsetX(val:Float) {
+		offsetX = val;
+		dirty = true;
+		return val;
+	}
+
+	public function set_offsetY(val:Float) {
+		offsetY = val;
 		dirty = true;
 		return val;
 	}

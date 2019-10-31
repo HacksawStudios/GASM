@@ -24,8 +24,15 @@ class OffsetComponent extends Component {
 	}
 
 	override public function update(dt:Float) {
-		var model:SpriteModelComponent = owner.get(SpriteModelComponent);
-		model.offsetX = offset.x * _scale * _appModel.scale;
-		model.offsetY = offset.y * _scale * _appModel.scale;
+		final model:SpriteModelComponent = owner.get(SpriteModelComponent);
+		final offsetX = offset.x * _scale * _appModel.scale;
+		final offsetY = offset.y * _scale * _appModel.scale;
+
+		if (offsetX == model.offsetX && offsetY == model.offsetY) {
+			return;
+		}
+
+		model.offsetX = offsetX;
+		model.offsetY = offsetY;
 	}
 }

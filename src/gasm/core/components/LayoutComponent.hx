@@ -138,8 +138,7 @@ class LayoutComponent extends Component {
 			haxe.Timer.delay(layout, 50);
 			return;
 		}
-		layoutBox.scale != null ? spriteModel.origWidth : spriteModel.width;
-		layoutBox.scale != null ? spriteModel.origHeight : spriteModel.height;
+
 		calculateMargins(layoutBox.margins, parent);
 		calculatePadding();
 
