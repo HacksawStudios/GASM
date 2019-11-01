@@ -162,8 +162,7 @@ class Loader {
 			var bytes = haxe.io.Bytes.ofData(request.response);
 			switch (item.type) {
 				case AssetType.Font:
-					var fontResourceName = 'R_font_' + item.name;
-					untyped {
+					var fontResourceName = 'R_font_' + item.name; untyped {
 						var s = js.Browser.document.createStyleElement();
 						s.type = "text/css";
 						s.innerHTML = "@font-face{ font-family: " + fontResourceName + "; src: url('data:font/ttf;base64," + Base64.encode(bytes)
@@ -273,7 +272,8 @@ class Loader {
 						entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
 					case AssetType.Atlas:
 						entry = files.find(val -> val.extension == '.atlas');
-						entry.extra = files.find(val -> val.extension == '.png' || val.extension == '.jpg');
+						var preferedExtension = getPreferedExtension(AssetType.AtlasImage);
+						entry.extra = files.find(val -> val.extension == preferedExtension);
 						entry.extra.type = 'file';
 						entry.extra.path = entry.extra.path.replace('\\', '/');
 						entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
