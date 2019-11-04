@@ -245,6 +245,7 @@ class Loader {
 			if (matches == null || matches.length < 1) {
 				matches = findFilesByName(folder, name);
 			}
+			trace('matches', matches);
 			return matches;
 		}
 		// Resolve files in following priority: Branding platform -> Branding common -> Default platform -> Default common
@@ -274,6 +275,10 @@ class Loader {
 						entry = files.find(val -> val.extension == '.atlas');
 						var preferedExtension = getPreferedExtension(AssetType.AtlasImage);
 						entry.extra = files.find(val -> val.extension == preferedExtension);
+						if(entry.extra == null) {
+							entry.extra = files.find(val -> val.extension == '.png' || val.extension == '.jpg');
+						}
+						gasm.core.utils.Assert.that(entry.extra != null, 'Unable to find atlas image.');
 						entry.extra.type = 'file';
 						entry.extra.path = entry.extra.path.replace('\\', '/');
 						entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
