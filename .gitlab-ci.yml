@@ -3,7 +3,7 @@ stages:
   - release
 
 test:
-  image: hacksawgaming/hacksaw-build:4.0.0-rc.3-1
+  image: hacksawgaming/hacksaw-build:4.0.0-1
   stage: test
   before_script:
     - yarn
@@ -16,7 +16,7 @@ test:
       - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+(?:-rc\.[0-9]+)?/
 
 package_release:
-  image: hacksawgaming/hacksaw-build:4.0.0-rc.3-1
+  image: hacksawgaming/hacksaw-build:4.0.0-1
   stage: release
   before_script:
     - yarn
@@ -30,7 +30,7 @@ package_release:
       - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+/ 
 
 package_rc:
-  image: hacksawgaming/hacksaw-build:4.0.0-rc.3-1
+  image: hacksawgaming/hacksaw-build:4.0.0-1
   stage: release
   before_script:
     - yarn
