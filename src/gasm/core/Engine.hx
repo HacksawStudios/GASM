@@ -14,6 +14,7 @@ import gasm.core.ISystem;
  */
 class Engine implements IEngine {
 	public var baseEntity(default, null):Entity;
+	public var getDelta:Null<() -> Float> = null;
 
 	var _systems:Array<ISystem>;
 	var _lastTime:Float = 0;
@@ -42,10 +43,15 @@ class Engine implements IEngine {
 
 	public function tick() {
 		if (!_paused) {
-			var now = Timer.stamp();
-			var delta = now - _lastTime;
+			var delta = 0.0;
+			if (getDelta != null) {
+				delta = getDelta();
+			} else {
+				var now = Timer.stamp();
+				delta = now - _lastTime;
+				_lastTime = now;
+			}
 			updateEntity(baseEntity, delta);
-			_lastTime = now;
 		}
 	}
 
