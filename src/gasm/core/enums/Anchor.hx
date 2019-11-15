@@ -1,8 +1,9 @@
 package gasm.core.enums;
 
-enum AnchorPoint {
+enum Anchor {
 	TOP;
 	BOTTOM;
 	LEFT;
 	RIGHT;
+	NONE;
 }
