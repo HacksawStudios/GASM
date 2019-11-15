@@ -235,7 +235,11 @@ class LayoutComponent extends Component {
 
 			solver.addConstraint(c.left == (c.leftMarg + c.parentW - (c.containerW + c.xMarg)));
 			solver.addConstraint(c.right == c.parentW - (c.contentW + c.rightMarg + c.xMarg));
-			solver.addConstraint(c.center == c.leftMarg - c.xMarg + c.parentW - c.containerW + ((c.containerW - (c.contentW + c.leftMarg + c.rightMarg)) / 2));
+			solver.addConstraint(c.center == c.leftMarg
+				- c.xMarg
+				+ c.parentW
+				- c.containerW
+				+ ((c.containerW - (c.contentW + c.leftMarg + c.rightMarg)) / 2));
 			solver.addConstraint(c.top >= c.ypos + c.topMarg);
 			solver.addConstraint(c.middle == c.top + (c.containerH - (c.contentH + c.topMarg + c.bottomMarg)) / 2);
 			solver.addConstraint(c.bottom == c.containerH - (c.contentH + c.bottomMarg));
@@ -578,13 +582,7 @@ enum Align {
  * Containers that is not docked (ContainerDock .NONE), as well as display object that are not containers, will be layed out
  * according to flow and alignment values of the parent.
 **/
-enum Dock {
-	LEFT;
-	RIGHT;
-	TOP;
-	BOTTOM;
-	NONE;
-}
+typedef Dock = gasm.core.enums.Anchor;
 
 /**
  * Flow defines if children of the container should be laid out vertically or horizontally.
