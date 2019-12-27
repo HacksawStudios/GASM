@@ -272,8 +272,8 @@ class Loader {
 						entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
 					case AssetType.Atlas:
 						entry = files.find(val -> val.extension == '.atlas');
-						var preferedExtension = getPreferedExtension(AssetType.AtlasImage);
-						entry.extra = files.find(val -> val.extension == preferedExtension);
+						var preferredExtension = getPreferredExtension(AssetType.AtlasImage);
+						entry.extra = files.find(val -> val.extension == preferredExtension);
 						if (entry.extra == null) {
 							entry.extra = files.find(val -> val.extension == '.basis' || val.extension == '.png' || val.extension == '.jpg');
 						}
@@ -283,15 +283,15 @@ class Loader {
 						entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
 						entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
 					default:
-						var preferedExtension = getPreferedExtension(type);
-						if (preferedExtension == null) {
-							trace('Multiple files with same name found, but no prefered extension configured.');
+						var preferredExtension = getPreferredExtension(type);
+						if (preferredExtension == null) {
+							trace('Multiple files with same name found, but no preferred extension configured.');
 							trace('When constructing Loader add format param defining if you prefer to use '
 								+ [for (match in files) match.extension].join(' or ')
 								+ ' for type '
 								+ type.getName());
 						}
-						entry = files.find(val -> val.extension == preferedExtension);
+						entry = files.find(val -> val.extension == preferredExtension);
 				}
 			} else {
 				entry = files[0];
@@ -325,7 +325,7 @@ class Loader {
 		onProgress(Std.int((loadedTotal / _totalBytes) * 100));
 	}
 
-	function getPreferedExtension(type:AssetType) {
+	function getPreferredExtension(type:AssetType) {
 		var fmt = _formats.find(val -> val.type == type);
 		if (fmt != null) {
 			return fmt.extension;
