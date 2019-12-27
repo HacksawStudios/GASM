@@ -282,13 +282,6 @@ class Loader {
 						entry.extra.path = entry.extra.path.replace('\\', '/');
 						entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
 						entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
-					case AssetType.Image:
-						var preferedExtension = getPreferedExtension(AssetType.Image);
-						// Fallback to supported image extensions if no image exists with preferred one
-						final image = files.find(val -> val.extension == preferedExtension || val.extension == '.basis' || val.extension == '.png'
-							|| val.extension == '.jpg');
-						gasm.core.utils.Assert.that(image != null, 'Image found with unsupported extenstion');
-						entry = image;
 					default:
 						var preferedExtension = getPreferedExtension(type);
 						if (preferedExtension == null) {
@@ -314,7 +307,16 @@ class Loader {
 	}
 
 	inline function findFilesByName(dir:FileEntry, name:String):Array<FileEntry> {
-		return dir.children.filter(item -> item.name.substr(0, item.name.lastIndexOf('.')) == name && item.type == 'file');
+		final matchingFiles = dir.children.filter(item -> {
+			// Check if extension is part of item/file name (if item has been processed before it won't have extension as part of the name)
+			if (item.name.lastIndexOf('.') != -1) {
+				return item.name.substr(0, item.name.lastIndexOf('.')) == name && item.type == 'file';
+			} else {
+				return item.name == name && item.type == 'file';
+			}
+		});
+
+		return matchingFiles;
 	}
 
 	function handleProgress(position:Int, id:String, total:Int) {
