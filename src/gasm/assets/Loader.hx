@@ -268,7 +268,7 @@ class Loader {
 						entry.extra = files.find(val -> val.extension == '.png');
 						entry.extra.type = 'file';
 						entry.extra.path = entry.extra.path.replace('\\', '/');
-						entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
+						entry.extra.name = getCleanFilename(entry.extra.name);
 						entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
 					case AssetType.Atlas:
 						entry = files.find(val -> val.extension == '.atlas');
@@ -280,7 +280,7 @@ class Loader {
 						gasm.core.utils.Assert.that(entry.extra != null, 'Unable to find atlas image.');
 						entry.extra.type = 'file';
 						entry.extra.path = entry.extra.path.replace('\\', '/');
-						entry.extra.name = entry.extra.name.substr(0, entry.extra.name.lastIndexOf('.'));
+						entry.extra.name = getCleanFilename(entry.extra.name);
 						entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
 					default:
 						var preferredExtension = getPreferredExtension(type);
@@ -301,22 +301,18 @@ class Loader {
 			return null;
 		}
 		entry.path = entry.path.replace('\\', '/');
-		entry.name = entry.name.substr(0, entry.name.lastIndexOf('.'));
+		entry.name = getCleanFilename(entry.name);
 		entry.size = entry.size != null ? Std.int(entry.size) : 0;
 		return entry;
 	}
 
-	inline function findFilesByName(dir:FileEntry, name:String):Array<FileEntry> {
-		final matchingFiles = dir.children.filter(item -> {
-			// Check if extension is part of item/file name (if item has been processed before it won't have extension as part of the name)
-			if (item.name.lastIndexOf('.') != -1) {
-				return item.name.substr(0, item.name.lastIndexOf('.')) == name && item.type == 'file';
-			} else {
-				return item.name == name && item.type == 'file';
-			}
-		});
+	inline function getCleanFilename(name:String):String {
+		final len = name.lastIndexOf('.') != -1 ? name.lastIndexOf('.') : null;
+		return name.substr(0, len);
+	}
 
-		return matchingFiles;
+	inline function findFilesByName(dir:FileEntry, name:String):Array<FileEntry> {
+		return dir.children.filter(item -> getCleanFilename(item.name) == name && item.type == 'file');
 	}
 
 	function handleProgress(position:Int, id:String, total:Int) {
