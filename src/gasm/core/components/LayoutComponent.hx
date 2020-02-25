@@ -9,6 +9,7 @@ import gasm.core.events.InteractionEvent;
 import gasm.core.math.geom.Point;
 import gasm.core.utils.Assert;
 import gasm.core.utils.Log;
+import gasm.core.utils.SignalConnection;
 import jasper.Solver;
 import jasper.Variable;
 
@@ -31,6 +32,7 @@ class LayoutComponent extends Component {
 	var _displayDelay:Int;
 	var _parentBox:LayoutBox;
 	var _children:Array<LayoutComponent>;
+	var _resizeConnection:SignalConnection;
 
 	public function new(box:LayoutBox, displayDelay:Int = 0) {
 		layoutBox = box;
@@ -92,7 +94,7 @@ class LayoutComponent extends Component {
 			isRoot = true;
 		}
 
-		_appModel.resizeSignal.connect(function(size:TResize) {
+		_resizeConnection = _appModel.resizeSignal.connect(function(size:TResize) {
 			layout();
 		});
 
@@ -110,10 +112,15 @@ class LayoutComponent extends Component {
 
 	override public function dispose():Void {
 		freeze = true;
-		spriteModel.dispose();
+		if (spriteModel != null) {
+			spriteModel.dispose();
+		}
 		_children = null;
 		constraints = null;
 		parent = null;
+		if (_resizeConnection != null) {
+			_resizeConnection.dispose();
+		}
 		super.dispose();
 	}
 
