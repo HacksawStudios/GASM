@@ -1,13 +1,13 @@
 package gasm.core;
 
-import gasm.core.components.TextModelComponent;
-import haxe.macro.Type.ClassType;
 import gasm.core.components.SoundModelComponent;
-import haxe.macro.Expr;
-import haxe.macro.Expr.ExprOf;
 import gasm.core.components.SpriteModelComponent;
+import gasm.core.components.TextModelComponent;
 import gasm.core.components.ThreeDModelComponent;
 import gasm.core.utils.Assert;
+import haxe.macro.Expr.ExprOf;
+import haxe.macro.Expr;
+import haxe.macro.Type.ClassType;
 
 using Lambda;
 using haxe.macro.Tools;
@@ -115,7 +115,9 @@ using haxe.macro.Tools;
 					prev.owner = this;
 					prev.next = next;
 				}
-				_compMap.remove(comp.name);
+				if (_compMap != null) {
+					_compMap.remove(comp.name);
+				}
 				if (comp.inited) {
 					comp.dispose();
 				}
