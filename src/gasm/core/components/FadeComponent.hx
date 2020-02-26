@@ -41,7 +41,7 @@ class FadeComponent extends Component {
 			if (_config.onComplete != null) {
 				_config.onComplete();
 			}
-			owner.remove(this);
+			remove();
 		}
 
 		super.update(dt);
