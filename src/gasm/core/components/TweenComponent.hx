@@ -1,10 +1,10 @@
 package gasm.core.components;
 
-import tweenxcore.Tools.Easing;
-import tweenx909.TweenX;
+import gasm.core.Component;
 import gasm.core.components.SpriteModelComponent;
 import gasm.core.enums.ComponentType;
-import gasm.core.Component;
+import tweenx909.TweenX;
+import tweenxcore.Tools.Easing;
 
 class TweenComponent extends Component {
 	var _properties:Dynamic;
@@ -42,9 +42,7 @@ class TweenComponent extends Component {
 				if (_completeFunc != null) {
 					_completeFunc();
 				}
-				if (owner != null) {
-					owner.remove(this);
-				}
+				remove();
 			});
 		} else {
 			trace("warn",
