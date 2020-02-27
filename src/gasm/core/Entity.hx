@@ -164,7 +164,7 @@ using haxe.macro.Tools;
 	#end
 
 	inline public function getComponentByName(name:String):Component {
-		return _compMap.get(name);
+		return _compMap != null ? _compMap.get(name) : null;
 	}
 
 	public function getFromParentsByName<T:Component>(name:String, castToClass:Class<T>):T {
