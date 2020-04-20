@@ -1,8 +1,8 @@
 package gasm.core.systems;
 
-import gasm.core.enums.ComponentType;
 import gasm.core.ISystem;
 import gasm.core.System;
+import gasm.core.enums.ComponentType;
 import gasm.core.enums.SystemType;
 
 /**
@@ -22,10 +22,14 @@ class CoreSystem extends System implements ISystem {
 	}
 
 	inline public function update(comp:Component, delta:Float) {
-		if (!comp.inited) {
+		final inited = comp.inited;
+		if (!inited) {
 			comp.init();
 			comp.inited = true;
 		}
 		comp.update(delta);
+		if (!inited) {
+			comp.onAdded();
+		}
 	}
 }
