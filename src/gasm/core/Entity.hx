@@ -146,7 +146,9 @@ using haxe.macro.Tools;
 	#end
 
 	#if (display || dox)
-	public function getFromParents<T:Component>(componentClass:Class<T>):T {}
+	public function getFromParents<T:Component>(componentClass:Class<T>):T {
+		return null;
+	}
 	#else
 	macro public function getFromParents<T:Component>(self:Expr, componentClass:ExprOf<Class<T>>):ExprOf<T> {
 		var name = macro $componentClass.BASE_NAME;
@@ -155,7 +157,9 @@ using haxe.macro.Tools;
 	#end
 
 	#if (display || dox)
-	public function getFromRoot<T:Component>(componentClass:Class<T>):T {}
+	public function getFromRoot<T:Component>(componentClass:Class<T>):T {
+		return null;
+	}
 	#else
 	macro public function getFromRoot<T:Component>(self:Expr, componentClass:ExprOf<Class<T>>):ExprOf<T> {
 		var name = macro $componentClass.BASE_NAME;
