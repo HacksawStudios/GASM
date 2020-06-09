@@ -133,7 +133,9 @@ using haxe.macro.Tools;
 	}
 
 	#if (display || dox)
-	public function get<T:Component>(componentClass:Class<T>):T {}
+	public function get<T:Component>(componentClass:Class<T>):T {
+		return null;
+	}
 	#else
 	macro public function get<T:Component>(self:Expr, componentClass:ExprOf<Class<T>>):ExprOf<T> {
 		var componentName = macro $componentClass.BASE_NAME;
