@@ -38,6 +38,11 @@ class Component {
 	public function init() {}
 
 	/**
+		Assign this to get callback when init is complete and component has had it's first update
+	**/
+	dynamic public function onAdded() {}
+
+	/**
 		Remove this component from eventual owner. Will cause disposal if has an owner, else it is assumed component is already removed and disposed.
 
 		@return True if component had an owner to be removed from

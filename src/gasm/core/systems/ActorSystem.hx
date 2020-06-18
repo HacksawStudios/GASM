@@ -1,9 +1,9 @@
 package gasm.core.systems;
 
-import gasm.core.System;
 import gasm.core.ISystem;
-import gasm.core.enums.SystemType;
+import gasm.core.System;
 import gasm.core.enums.ComponentType;
+import gasm.core.enums.SystemType;
 
 /**
  * Updates the actor components.
@@ -18,10 +18,14 @@ class ActorSystem extends System implements ISystem {
 	}
 
 	inline public function update(comp:Component, delta:Float) {
-		if (!comp.inited) {
+		final inited = comp.inited;
+		if (!inited) {
 			comp.init();
 			comp.inited = true;
 		}
 		comp.update(delta);
+		if (!inited) {
+			comp.onAdded();
+		}
 	}
 }
