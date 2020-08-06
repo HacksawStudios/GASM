@@ -38,20 +38,14 @@ class AppModelComponent extends Component {
 	public function isShaderEnabled(name:String) {
 		#if js
 		final ua:String = js.Syntax.code('window.navigator.userAgent');
-		if (enableShaderDevices != null) {
-			if (enableShaderDevices.exists(name) && enableShaderDevices.get(name) != null) {
-				final enabled = enableShaderDevices.get(name).any(dev -> ua.contains(dev));
-				if (enabled) {
-					return true;
-				}
-			}
-			return false;
+		if (disableShaderDevices.exists(name) && disableShaderDevices.get(name) != null) {
+			final disabled = disableShaderDevices.get(name).any(dev -> ua.contains(dev));
+			return !disabled;
 		}
-		if (disableShaderDevices != null) {
-			if (enableShaderDevices.exists(name) && enableShaderDevices.get(name) != null) {
-				final disabled = disableShaderDevices.get(name).any(dev -> ua.contains(dev));
-				return !disabled;
-			}
+
+		if (enableShaderDevices.exists(name) && enableShaderDevices.get(name) != null) {
+			final enabled = enableShaderDevices.get(name).any(dev -> ua.contains(dev));
+			return enabled;
 		}
 		#end
 		return true;
