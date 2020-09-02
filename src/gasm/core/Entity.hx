@@ -116,7 +116,7 @@ using haxe.macro.Tools;
 					prev.next = next;
 				}
 				if (_compMap != null) {
-					_compMap.remove(comp.name);
+					_compMap.remove(comp.baseName);
 				}
 				if (comp.inited) {
 					comp.dispose();
