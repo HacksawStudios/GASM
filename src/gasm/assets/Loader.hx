@@ -13,6 +13,7 @@ class Loader {
 	var _imageFolder = 'image';
 	var _soundFolder = 'sound';
 	var _atlasFolder = 'atlas';
+	var _spineFolder = 'spine';
 	var _modelFolder = 'model';
 	var _gradientFolder = 'gradient';
 	var _fontFolder = 'font';
@@ -54,6 +55,7 @@ class Loader {
 		_soundFolder = config.soundFolder != null ? config.soundFolder : _soundFolder;
 		_fontFolder = config.fontFolder != null ? config.fontFolder : _fontFolder;
 		_atlasFolder = config.atlasFolder != null ? config.atlasFolder : _atlasFolder;
+		_spineFolder = config.spineFolder != null ? config.spineFolder : _spineFolder;
 		_modelFolder = config.modelFolder != null ? config.modelFolder : _modelFolder;
 		_gradientFolder = config.gradientFolder != null ? config.gradientFolder : _gradientFolder;
 		_configFolder = config.configFolder != null ? config.configFolder : _configFolder;
@@ -87,7 +89,12 @@ class Loader {
 	public function load() {
 		_loadedItems = 0;
 		_totalBytes = _loadingQueue.fold((curr : QueueItem, last : Int) -> {
-			var size = curr.extra != null ? curr.extra.size + curr.size : curr.size;
+			var size = curr.size;
+			if (curr.extras != null) {
+				for (e in curr.extras) {
+					size += e.size;
+				}
+			}
 			return (size + last);
 		}, 0);
 		loadNext();
@@ -103,26 +110,43 @@ class Loader {
 			var extraType = switch (type) {
 				case AssetType.BitmapFont: AssetType.BitmapFontImage;
 				case AssetType.Atlas: AssetType.AtlasImage;
+				case AssetType.SpineAtlas: AssetType.SpineImage;
+				default: null;
+			}
+			var extraType2 = switch (type) {
+				case AssetType.SpineAtlas: AssetType.SpineConfig;
 				default: null;
 			}
 			_totalItems++;
-			if (entry.extra != null) {
-				_totalItems++;
-			}
-			_loadingQueue.push({
+
+			final queueItem:QueueItem = {
 				type: type,
 				name: entry.name,
 				path: entry.path,
 				size: entry.size,
 				extension: entry.extension,
-				extra: entry.extra == null ? null : {
-					type: extraType,
-					name: entry.extra.name,
-					path: entry.extra.path,
-					size: entry.extra.size,
-					extension: entry.extra.extension,
+				extras: null,
+			};
+
+			if (entry.extras != null) {
+				queueItem.extras = [];
+				for (e in entry.extras) {
+					final eType = queueItem.extras.length >= 1
+						&& extraType2 != null ? extraType2 : extraType; // TODO: This needs rethinking
+					trace('eType', eType);
+					final extraItem:QueueItem = {
+						type: eType,
+						name: e.name,
+						path: e.path,
+						size: e.size,
+						extension: e.extension,
+					};
+					queueItem.extras.push(extraItem);
+					_totalItems++;
 				}
-			});
+			}
+
+			_loadingQueue.push(queueItem);
 		}
 	}
 
@@ -138,9 +162,12 @@ class Loader {
 		if (_itemIndex < _loadingQueue.length) {
 			var item = _loadingQueue[_itemIndex];
 			loadItem(item, _extensionHandlers.get(item.type.getIndex()));
-			if (item.extra != null) {
-				loadItem(item.extra, _extensionHandlers.get(item.extra.type.getIndex()));
+			if (item.extras != null) {
+				for (e in item.extras) {
+					loadItem(e, _extensionHandlers.get(e.type.getIndex()));
+				}
 			}
+
 			haxe.Timer.delay(() -> {
 				_itemIndex++;
 				loadNext();
@@ -208,6 +235,7 @@ class Loader {
 			case AssetType.Sound: _soundFolder;
 			case AssetType.Font | AssetType.BitmapFont: _fontFolder;
 			case AssetType.Atlas: _atlasFolder;
+			case AssetType.SpineAtlas: _spineFolder;
 			case AssetType.Model: _modelFolder;
 			case AssetType.Gradient: _gradientFolder;
 			case AssetType.Config: _configFolder;
@@ -265,23 +293,55 @@ class Loader {
 				switch (type) {
 					case AssetType.BitmapFont:
 						entry = files.find(val -> val.extension == '.xml' || val.extension == '.fnt');
-						entry.extra = files.find(val -> val.extension == '.png');
-						entry.extra.type = 'file';
-						entry.extra.path = entry.extra.path.replace('\\', '/');
-						entry.extra.name = getCleanFilename(entry.extra.name);
-						entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
+						final extra = files.find(val -> val.extension == '.png');
+						gasm.core.utils.Assert.that(extra != null, 'Unable to find bitmap font image.');
+						entry.extras = [];
+						extra.type = 'file';
+						extra.path = extra.path.replace('\\', '/');
+						extra.name = getCleanFilename(extra.name);
+						extra.size = extra.size != null ? Std.int(extra.size) : 0;
+						entry.extras.push(extra);
 					case AssetType.Atlas:
 						entry = files.find(val -> val.extension == '.atlas');
 						var preferredExtension = getPreferredExtension(AssetType.AtlasImage);
-						entry.extra = files.find(val -> val.extension == preferredExtension);
-						if (entry.extra == null) {
-							entry.extra = files.find(val -> val.extension == '.basis' || val.extension == '.png' || val.extension == '.jpg');
+						var extra = files.find(val -> val.extension == preferredExtension);
+						if (extra == null) {
+							extra = files.find(val -> val.extension == '.basis' || val.extension == '.png' || val.extension == '.jpg');
 						}
-						gasm.core.utils.Assert.that(entry.extra != null, 'Unable to find atlas image.');
-						entry.extra.type = 'file';
-						entry.extra.path = entry.extra.path.replace('\\', '/');
-						entry.extra.name = getCleanFilename(entry.extra.name);
-						entry.extra.size = entry.extra.size != null ? Std.int(entry.extra.size) : 0;
+						gasm.core.utils.Assert.that(extra != null, 'Unable to find atlas image.');
+						entry.extras = [];
+						extra.type = 'file';
+						extra.path = extra.path.replace('\\', '/');
+						extra.name = getCleanFilename(extra.name);
+						extra.size = extra.size != null ? Std.int(extra.size) : 0;
+						entry.extras.push(extra);
+					case AssetType.SpineAtlas:
+						trace('files', files);
+						entry = files.find(val -> val.extension == '.atlas');
+
+						// SpineImage
+						var preferredExtension = getPreferredExtension(AssetType.SpineImage);
+						var extra = files.find(val -> val.extension == preferredExtension);
+						if (extra == null) {
+							extra = files.find(val -> val.extension == '.png' || val.extension == '.jpg');
+						}
+						gasm.core.utils.Assert.that(extra != null, 'Unable to find spine image.');
+						entry.extras = [];
+						extra.type = 'file';
+						extra.path = extra.path.replace('\\', '/');
+						extra.name = getCleanFilename(extra.name);
+						extra.size = extra.size != null ? Std.int(extra.size) : 0;
+						entry.extras.push(extra);
+
+						// SpineConfig
+						var extraConfig = files.find(val -> val.extension == '.json');
+						gasm.core.utils.Assert.that(extraConfig != null, 'Unable to find spine config.');
+						extraConfig.type = 'file';
+						extraConfig.path = extraConfig.path.replace('\\', '/');
+						extraConfig.name = getCleanFilename(extraConfig.name);
+						extraConfig.size = extraConfig.size != null ? Std.int(extraConfig.size) : 0;
+						entry.extras.push(extraConfig);
+						trace('entry', entry);
 					default:
 						var preferredExtension = getPreferredExtension(type);
 						if (preferredExtension == null) {
@@ -336,7 +396,8 @@ typedef QueueItem = {
 	path:String,
 	size:Int,
 	extension:String,
-	?extra:QueueItem,
+	?extras:Array<QueueItem>,
+	// ?extra2:QueueItem,
 }
 
 typedef FormatType = {
@@ -355,6 +416,9 @@ enum AssetType {
 	AtlasImage;
 	Gradient;
 	Model;
+	SpineAtlas;
+	SpineImage;
+	SpineConfig;
 }
 
 typedef HandlerItem = {
@@ -396,6 +460,10 @@ typedef AssetConfig = {
 	 * Name of folder containing atlases, defaults to 'atlas'
 	 */
 	?atlasFolder:String,
+	/**
+	 * Name of folder containing spines, defaults to 'spine'
+	 */
+	?spineFolder:String,
 	/**
 	 * Name of folder containing models, defaults to 'model'
 	 */
