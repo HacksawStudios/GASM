@@ -399,7 +399,6 @@ typedef QueueItem = {
 	size:Int,
 	extension:String,
 	?extras:Array<QueueItem>,
-	// ?extra2:QueueItem,
 }
 
 typedef FormatType = {
