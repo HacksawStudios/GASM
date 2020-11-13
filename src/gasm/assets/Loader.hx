@@ -107,16 +107,6 @@ class Loader {
 	public function queueItem(id:String, type:AssetType) {
 		var entry = getEntry(id, type);
 		if (entry != null) {
-			// var extraType = switch (type) {
-			// 	case AssetType.BitmapFont: AssetType.BitmapFontImage;
-			// 	case AssetType.Atlas: AssetType.AtlasImage;
-			// 	case AssetType.SpineAtlas: AssetType.SpineImage;
-			// 	default: null;
-			// }
-			// var extraType2 = switch (type) {
-			// 	case AssetType.SpineAtlas: AssetType.SpineConfig;
-			// 	default: null;
-			// }
 			final extraTypes:Array<AssetType> = switch (type) {
 				case AssetType.BitmapFont: [BitmapFontImage];
 				case AssetType.Atlas: [AtlasImage];
