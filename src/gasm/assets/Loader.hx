@@ -107,15 +107,21 @@ class Loader {
 	public function queueItem(id:String, type:AssetType) {
 		var entry = getEntry(id, type);
 		if (entry != null) {
-			var extraType = switch (type) {
-				case AssetType.BitmapFont: AssetType.BitmapFontImage;
-				case AssetType.Atlas: AssetType.AtlasImage;
-				case AssetType.SpineAtlas: AssetType.SpineImage;
-				default: null;
-			}
-			var extraType2 = switch (type) {
-				case AssetType.SpineAtlas: AssetType.SpineConfig;
-				default: null;
+			// var extraType = switch (type) {
+			// 	case AssetType.BitmapFont: AssetType.BitmapFontImage;
+			// 	case AssetType.Atlas: AssetType.AtlasImage;
+			// 	case AssetType.SpineAtlas: AssetType.SpineImage;
+			// 	default: null;
+			// }
+			// var extraType2 = switch (type) {
+			// 	case AssetType.SpineAtlas: AssetType.SpineConfig;
+			// 	default: null;
+			// }
+			final extraTypes:Array<AssetType> = switch (type) {
+				case AssetType.BitmapFont: [BitmapFontImage];
+				case AssetType.Atlas: [AtlasImage];
+				case AssetType.SpineAtlas: [SpineImage, SpineConfig];
+				default: [];
 			}
 			_totalItems++;
 
@@ -131,17 +137,15 @@ class Loader {
 			if (entry.extras != null) {
 				queueItem.extras = [];
 				for (e in entry.extras) {
-					final eType = queueItem.extras.length >= 1
-						&& extraType2 != null ? extraType2 : extraType; // TODO: This needs rethinking
-					trace('eType', eType);
 					final extraItem:QueueItem = {
-						type: eType,
+						type: extraTypes[queueItem.extras.length],
 						name: e.name,
 						path: e.path,
 						size: e.size,
 						extension: e.extension,
 					};
 					queueItem.extras.push(extraItem);
+
 					_totalItems++;
 				}
 			}
@@ -316,7 +320,6 @@ class Loader {
 						extra.size = extra.size != null ? Std.int(extra.size) : 0;
 						entry.extras.push(extra);
 					case AssetType.SpineAtlas:
-						trace('files', files);
 						entry = files.find(val -> val.extension == '.atlas');
 
 						// SpineImage
@@ -341,7 +344,6 @@ class Loader {
 						extraConfig.name = getCleanFilename(extraConfig.name);
 						extraConfig.size = extraConfig.size != null ? Std.int(extraConfig.size) : 0;
 						entry.extras.push(extraConfig);
-						trace('entry', entry);
 					default:
 						var preferredExtension = getPreferredExtension(type);
 						if (preferredExtension == null) {
