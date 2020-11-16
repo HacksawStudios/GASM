@@ -1,6 +1,6 @@
 {
   "name": "@hacksawstudios/gasm",
-  "version": "1.36.1-rc.2",
+  "version": "1.37.0-rc.0",
   "description": "Entity Component System",
   "main": "index.js",
   "scripts": {
