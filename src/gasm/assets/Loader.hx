@@ -316,7 +316,7 @@ class Loader {
 						var preferredExtension = getPreferredExtension(AssetType.SpineImage);
 						var extra = files.find(val -> val.extension == preferredExtension);
 						if (extra == null) {
-							extra = files.find(val -> val.extension == '.png' || val.extension == '.jpg');
+							extra = files.find(val -> val.extension == '.png' || val.extension == '.jpg' || val.extension == '.basis');
 						}
 						gasm.core.utils.Assert.that(extra != null, 'Unable to find spine image.');
 						entry.extras = [];
