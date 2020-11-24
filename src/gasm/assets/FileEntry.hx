@@ -7,7 +7,7 @@ typedef FileEntry = {
 	path:String,
 	?children:Array<FileEntry>,
 	?extension:String,
-	?extra:FileEntry,
+	?extras:Array<FileEntry>,
 }
 
 @:enum abstract FileEntryType(String) from String to String {
