@@ -28,7 +28,6 @@ class Component {
 	public var componentType(default, null):ComponentType;
 
 	var _scheduled:Array<ScheduleItem> = [];
-	var _now = 0.0;
 
 	/**
 	 * Called when component been successfully added to entity.
@@ -72,9 +71,9 @@ class Component {
 	 * @param dt Seconds elapsed since last tick.
 	 */
 	public function update(dt:Float) {
-		_now += dt;
 		for (item in _scheduled) {
-			if (item.when <= _now) {
+			item.when -= dt;
+			if (item.when <= 0) {
 				item.trigger.trigger(Noise);
 				_scheduled.remove(item);
 			}
@@ -90,7 +89,7 @@ class Component {
 	**/
 	function after(delay = 0):Future<Noise> {
 		final trigger = Future.trigger();
-		_scheduled.push({when: _now + (delay / 1000), trigger: trigger});
+		_scheduled.push({when: (delay / 1000), trigger: trigger});
 		return trigger.asFuture();
 	}
 
