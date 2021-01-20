@@ -4,6 +4,7 @@
 -lib buddy:2.12.1
 -lib tweenx
 -lib travix:0.10.5
+-lib tink_core:1.27.1
 -dce no
 -D travis
 -D buddy-colors
