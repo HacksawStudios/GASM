@@ -2,6 +2,8 @@ package gasm.core;
 
 import gasm.core.enums.ComponentType;
 
+using tink.CoreApi;
+
 /**
  * ...
  * @author Leo Bergman
@@ -24,6 +26,8 @@ class Component {
 	public var inited(default, default):Bool = false;
 
 	public var componentType(default, null):ComponentType;
+
+	var _scheduled:Array<ScheduleItem> = [];
 
 	/**
 	 * Called when component been successfully added to entity.
@@ -58,13 +62,36 @@ class Component {
 	/**
 	 * Called when component is removed from entity. Called automatically on removal, so prefer using remove function.
 	 */
-	public function dispose() {}
+	public function dispose() {
+		_scheduled = [];
+	}
 
 	/**
 	 * Called when this component receives a game tick update.
-	 * @param delta Seconds elapsed since last tick.
+	 * @param dt Seconds elapsed since last tick.
 	 */
-	public function update(delta:Float) {}
+	public function update(dt:Float) {
+		for (item in _scheduled) {
+			item.when -= dt;
+			if (item.when <= 0) {
+				item.trigger.trigger(Noise);
+				_scheduled.remove(item);
+			}
+		}
+	}
+
+	/**
+	 * Schedule a future to be triggered
+	 *
+	 * NOTE: Depends on implementation calling super.update, which might not be the case with existing components since it was not needed before.
+	 *
+	 * @param delay Delay in ms after which future should trigger.
+	**/
+	function after(delay = 0):Future<Noise> {
+		final trigger = Future.trigger();
+		_scheduled.push({when: (delay / 1000), trigger: trigger});
+		return trigger.asFuture();
+	}
 
 	/**
 	 * Overridden in subclasses by build macro
@@ -81,4 +108,9 @@ class Component {
 	public function get_baseName():String {
 		return null;
 	}
+}
+
+typedef ScheduleItem = {
+	when:Float,
+	trigger:FutureTrigger<Noise>,
 }
