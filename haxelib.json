@@ -12,7 +12,7 @@
 		"leo.bergman"
 	],
 	"releasenote": "See https://github.com/HacksawStudios/gasm/blob/master/doc/changes.md",
-	"version": "1.30.1-rc.5",
+	"version": "2.0.0-rc.1",
 	"url": "https://github.com/HacksawStudios/gasm",
 	 "dependencies": {
 		 "tweenx": ""
