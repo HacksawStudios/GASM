@@ -19,10 +19,10 @@
     stream-to-array "^2.3.0"
     tagged-versions "^1.3.0"
 
-"@hacksawstudios/haxe-module-installer@1.2.1-rc.2":
-  version "1.2.1-rc.2"
-  resolved "https://packagecloud.io/hacksawstudios/client/npm/@hacksawstudios/haxe-module-installer/-/haxe-module-installer-1.2.1-rc.2.tgz#063e684f557f9edbe9ddea452dc3db15daa33b60"
-  integrity sha1-Bj5oT1V/ntvp3epFLcPbFdqjO2A=
+"@hacksawstudios/haxe-module-installer@1.2.1":
+  version "1.2.1"
+  resolved "https://packagecloud.io/hacksawstudios/client/npm/@hacksawstudios/haxe-module-installer/-/haxe-module-installer-1.2.1.tgz#02a985aca0fcfecc522367c4b4e6e57529fe0dbd"
+  integrity sha1-AqmFrKD8/sxSI2fEtObldSn+Db0=
 
 JSONStream@^1.0.4:
   version "1.3.5"

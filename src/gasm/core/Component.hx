@@ -26,8 +26,10 @@ class Component {
 	public var inited(default, default):Bool = false;
 
 	public var componentType(default, null):ComponentType;
+	public var enabled(get, set):Bool;
 
 	var _scheduled:Array<ScheduleItem> = [];
+	var _predicates:Array<PredicateItem> = [];
 
 	/**
 	 * Called when component been successfully added to entity.
@@ -78,6 +80,12 @@ class Component {
 				_scheduled.remove(item);
 			}
 		}
+		for (item in _predicates) {
+			if (item.predicate()) {
+				item.trigger.trigger(Noise);
+				_predicates.remove(item);
+			}
+		}
 	}
 
 	/**
@@ -90,6 +98,35 @@ class Component {
 	function after(delay = 0):Future<Noise> {
 		final trigger = Future.trigger();
 		_scheduled.push({when: (delay / 1000), trigger: trigger});
+		return trigger.asFuture();
+	}
+
+	/**
+		Schedule a future to trigger when a predicate is fulfilled
+
+		@param predicate Function which when returning true will cause future to resolve
+		@param timeout Number of seconds to wait for predicate to fultill and else resolve anyway. If unset or 0, future will never time out.
+	**/
+	function when(predicate:() -> Bool, timeout = 0.0):Future<Noise> {
+		final trigger = Future.trigger();
+		var remain = timeout;
+		var stamp = haxe.Timer.stamp();
+		var item:PredicateItem = null;
+
+		final func = timeout > 0 ?() -> {
+			final now = haxe.Timer.stamp();
+			remain -= now - stamp;
+			stamp = now;
+			final ready = predicate() || remain <= 0;
+			if (ready) {
+				_predicates.remove(item);
+			} else {
+				predicate();
+			}
+		} : predicate;
+
+		item = {predicate: func, trigger: trigger};
+		_predicates.push(item);
 		return trigger.asFuture();
 	}
 
@@ -108,9 +145,30 @@ class Component {
 	public function get_baseName():String {
 		return null;
 	}
+
+	/**
+	 * Override in subclass
+	 * @return True if enabled
+	 */
+	public function get_enabled():Bool {
+		return null;
+	}
+
+	/**
+	 * Override in subclass
+	 * @param val Enable (true) or disable (false)
+	 */
+	public function set_enabled(val:Bool) {
+		return null;
+	}
 }
 
 typedef ScheduleItem = {
 	when:Float,
+	trigger:FutureTrigger<Noise>,
+}
+
+typedef PredicateItem = {
+	predicate:() -> Bool,
 	trigger:FutureTrigger<Noise>,
 }

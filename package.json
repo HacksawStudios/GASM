@@ -1,6 +1,6 @@
 {
   "name": "@hacksawstudios/gasm",
-  "version": "1.38.0",
+  "version": "2.0.0-rc.2",
   "description": "Entity Component System",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,6 @@
     "fs-extra": "8.1.0"
   },
   "dependencies": {
-    "@hacksawstudios/haxe-module-installer": "1.2.1-rc.2"
+    "@hacksawstudios/haxe-module-installer": "1.2.1"
   }
 }

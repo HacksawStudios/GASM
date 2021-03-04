@@ -1,9 +1,11 @@
+image: hacksawgaming/hacksaw-build:4.2.1-1
+
 stages:
   - test
   - release
+  - mergeback
 
 test:
-  image: hacksawgaming/hacksaw-build:4.0.0-1
   stage: test
   before_script:
     - yarn
@@ -13,31 +15,65 @@ test:
     refs:
       - tags
     variables:
-      - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+(?:-rc\.[0-9]+)?/
-
+      - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+/
+      - $CI_COMMIT_MESSAGE =~ /^Update (package from master|version)$/m
+    
 package_release:
-  image: hacksawgaming/hacksaw-build:4.0.0-1
   stage: release
   before_script:
     - yarn
+    - git config --global user.email "ci@hacksawstudios.com"
+    - git config --global user.name "CI"
   script:
     - npx @hacksawstudios/gitlab-ci-releaser --npm
+    - yarn 
+    - git add .
+    - git commit -m "Update version"
+    - git push --follow-tags "https://${GITLAB_USER_NAME}:${GITLAB_CI_RELEASER_TOKEN}@${CI_REPOSITORY_URL#*@}" "HEAD:master"
   only:
     refs:
       - master
+      - /^patch_.*$/
   except:
     variables:
-      - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+/ 
+      - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+$/m
+      - $CI_COMMIT_MESSAGE =~ /^Update (package from master|version)$/m
 
 package_rc:
-  image: hacksawgaming/hacksaw-build:4.0.0-1
   stage: release
   before_script:
     - yarn
+    - git config --global user.email "ci@hacksawstudios.com"
+    - git config --global user.name "CI"
   script:
     - npx @hacksawstudios/gitlab-ci-releaser --npm --preid rc
+    - yarn 
+    - git add .
+    - git commit -m "Update version"
+    - git push "https://${GITLAB_USER_NAME}:${GITLAB_CI_RELEASER_TOKEN}@${CI_REPOSITORY_URL#*@}" "HEAD:develop"
   only:
     - develop
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+(?:-rc\.[0-9]+)?/
+      - $CI_COMMIT_MESSAGE =~ /^Update (package from master|version)$/m
+  
+merge_back:
+  stage: mergeback
+  before_script:
+    - yarn
+    - git config --global user.email "ci@hacksawstudios.com"
+    - git config --global user.name "CI"
+  script:
+    - git add .
+    - git commit -m "Update version"
+    - git fetch
+    - git checkout origin/develop
+    - git merge origin/master -X theirs
+    - npm version preminor --preid=rc -m "Update package from master"
+    - git push "https://${GITLAB_USER_NAME}:${GITLAB_CI_RELEASER_TOKEN}@${CI_REPOSITORY_URL#*@}" "HEAD:develop"
+  only:
+    refs:
+      - tags
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^\d+\.\d+\.\d+$/m
