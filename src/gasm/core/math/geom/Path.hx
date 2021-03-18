@@ -6,6 +6,9 @@ import h3d.Vector;
 
 using Safety;
 
+/**
+	Abstract over Arrays of vectors providing useful functions when working with connected lines forming a path.
+**/
 @:forward
 abstract Path(Array<Vector>) from Array<Vector> to Array<Vector> {
 	public function new(?points:Array<Vector>) {
