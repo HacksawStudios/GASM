@@ -7,7 +7,7 @@ import h3d.Vector;
 using Safety;
 
 @:forward
-abstract Path(Array<Vector>) {
+abstract Path(Array<Vector>) from Array<Vector> to Array<Vector> {
 	public function new(?points:Array<Vector>) {
 		this = points.or(new Array<Vector>());
 	}
